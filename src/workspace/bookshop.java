@@ -21,6 +21,7 @@ public class bookshop {
         myfun.print_title();
         myfun.print_face();
     }
+
     private static void display_unlogged_in() {
         System.out.println("\tCurrently you are logged out.");
         System.out.println("\tWhat would you like to do next?");
@@ -30,7 +31,7 @@ public class bookshop {
     }
 
     private static void display_admin() {
-        System.out.println("\tCurrently you are logged in as administrator "+cname+".");
+        System.out.println("\tCurrently you are logged in as administrator " + cname + ".");
         System.out.println("\tWhat would you like to do next?");
         System.out.println(" 1. Log in as a customer");
         System.out.println(" 2. Log out");
@@ -44,7 +45,7 @@ public class bookshop {
     }
 
     private static void display_customer() {
-        System.out.println("\tCurrently you are logged in as customer "+cname+".");
+        System.out.println("\tCurrently you are logged in as customer " + cname + ".");
         System.out.println("\tWhat would you like to do next?");
         System.out.println(" 1. Log in as an administrator");
         System.out.println(" 2. Log out");
@@ -86,12 +87,17 @@ public class bookshop {
         } while (tmp.equals("") || (tmp.charAt(0) != c1 && tmp.charAt(0) != c2));
         return tmp.charAt(0) == c2;
     }
+
     public static void alert(String s) {
-        System.out.println(">_< " + s + "!!!"); pause();
+        System.out.println(">_< " + s + "!!!");
+        pause();
     }
+
     public static void finish(String s) {
-        System.out.println("0w0 " + s + "!!!"); pause();
+        System.out.println("0w0 " + s + "!!!");
+        pause();
     }
+
     public static String polish(String a) {
         String b = "";
         for (int i = 0; i < a.length(); i++) {
@@ -131,7 +137,7 @@ public class bookshop {
     }
 
     public static void degree(String x) {
-        print("The two writers are "+x+" degree(s) separated.");
+        print("The two writers are " + x + " degree(s) separated.");
         pause();
     }
 
@@ -145,7 +151,7 @@ public class bookshop {
         }
     }
 
-    public static Integer getint(String s){
+    public static Integer getint(String s) {
         int x = -1;
         try {
             x = Integer.parseInt(s);
@@ -165,7 +171,8 @@ public class bookshop {
             String tmp = "%s\t\t\t%s\t";
             if (rs.getString(3) == null || rs.getString(3).toLowerCase().equals("null")) {
                 tmp += "unknown";
-            } else if (rs.getBoolean(3)) tmp += "hard"; else tmp += "soft";
+            } else if (rs.getBoolean(3)) tmp += "hard";
+            else tmp += "soft";
             tmp += "\t\t%s\n";
             System.out.printf(tmp, rs.getString(1), rs.getString(2), rs.getString(7));
             System.out.println("keywords : " + rs.getString(4));
@@ -335,7 +342,7 @@ public class bookshop {
                         display_admin();
                         String choice = "";
                         int c = 0;
-                        while ((choice = in.readLine()) == null || choice.length() == 0);
+                        while ((choice = in.readLine()) == null || choice.length() == 0) ;
                         try {
                             c = Integer.parseInt(choice);
                         } catch (Exception e) {
@@ -343,13 +350,16 @@ public class bookshop {
                         }
                         if (c > 8 || c < 1) continue;
                         if (c == 1) {
-                            admin = false; break;
+                            admin = false;
+                            break;
                         } else if (c == 2) {
-                            logged_in = admin = false; break;
+                            logged_in = admin = false;
+                            break;
                         } else if (c == 3) {
                             flag2 = choose("Input the one's customer id or user name ?", 'c', 'u');
 
-                            int k = 0; flag = false;
+                            int k = 0;
+                            flag = false;
 
                             if (!flag2) {
                                 do {
@@ -364,7 +374,7 @@ public class bookshop {
                                     }
                                     try {
                                         rs = con.stmt.executeQuery("select * from customer where cid = "
-                                                + Integer.toString(k)+";");
+                                                + Integer.toString(k) + ";");
                                     } catch (Exception e) {
                                         System.out.println(">_< Find the user with cid error");
                                         if (debug) e.printStackTrace();
@@ -375,8 +385,10 @@ public class bookshop {
                                         System.out.println("NO such user, continue?[y/n]");
                                         choice = in.readLine();
                                     } while (choice.equals("") || (choice.charAt(0) != 'y' && choice.charAt(0) != 'n'));
-                                    if (choice.charAt(0) == 'y') continue; else {
-                                        flag = true; break;
+                                    if (choice.charAt(0) == 'y') continue;
+                                    else {
+                                        flag = true;
+                                        break;
                                     }
                                 } while (true);
                             } else {
@@ -385,7 +397,7 @@ public class bookshop {
                                     choice = in.readLine();
                                     try {
                                         rs = con.stmt.executeQuery(
-                                                "select cid from customer where login_name = \'" +polish(choice)+"\';");
+                                                "select cid from customer where login_name = \'" + polish(choice) + "\';");
                                     } catch (Exception e) {
                                         System.out.println(">_< Find the user with user name error");
                                         if (debug) e.printStackTrace();
@@ -398,9 +410,12 @@ public class bookshop {
                                         do {
                                             System.out.println("NO such user, continue?[y/n]");
                                             choice = in.readLine();
-                                        } while (choice.equals("") || (choice.charAt(0) != 'y' && choice.charAt(0) != 'n'));
-                                        if (choice.charAt(0) == 'y') continue; else {
-                                            flag = true; break;
+                                        }
+                                        while (choice.equals("") || (choice.charAt(0) != 'y' && choice.charAt(0) != 'n'));
+                                        if (choice.charAt(0) == 'y') continue;
+                                        else {
+                                            flag = true;
+                                            break;
                                         }
                                     }
                                 } while (true);
@@ -415,8 +430,8 @@ public class bookshop {
 
                             sql = "update customer set admin =";
                             if (flag) sql += "true";
-                                else sql += "false";
-                            sql += " where cid = "+Integer.toString(k)+";";
+                            else sql += "false";
+                            sql += " where cid = " + Integer.toString(k) + ";";
 
                             try {
                                 con.stmt.execute(sql);
@@ -427,25 +442,29 @@ public class bookshop {
                             }
                             System.out.println("0w0 Changed authority successfully!!!");
                         } else if (c == 4) {
-                            String isbn = null; flag1 = false;
+                            String isbn = null;
+                            flag1 = false;
                             do {
                                 if (flag1) System.out.println("Please input the 10 bit isbn in the correct way:");
-                                    else System.out.println("Please input the 10 bit isbn for the new book:");
+                                else System.out.println("Please input the 10 bit isbn for the new book:");
                                 choice = in.readLine();
-                                flag = false; flag1 = true;
+                                flag = false;
+                                flag1 = true;
                                 if (choice.length() != 10) {
-                                    flag = true; continue;
+                                    flag = true;
+                                    continue;
                                 }
                                 choice = choice.toUpperCase();
                                 for (int i = 0; i < choice.length(); i++) {
                                     if ((choice.charAt(i) < '0' || choice.charAt(i) > '9') && choice.charAt(i) != 'X') {
-                                        flag = true; break;
+                                        flag = true;
+                                        break;
                                     }
                                 }
                             } while (flag);
 
                             isbn = choice;
-                            sql = "select * from book where isbn = "+choice+";";
+                            sql = "select * from book where isbn = " + choice + ";";
                             try {
                                 rs = con.stmt.executeQuery(sql);
                             } catch (Exception e) {
@@ -464,11 +483,14 @@ public class bookshop {
                                 System.out.println("Please input the cover format of the book[soft/hard/unknown]");
                                 choice = in.readLine();
                                 if (choice.equals("soft")) {
-                                    format = true; break;
+                                    format = true;
+                                    break;
                                 } else if (choice.equals("hard")) {
-                                    format = false; break;
+                                    format = false;
+                                    break;
                                 } else if (choice.equals("unknown")) {
-                                    format = null; break;
+                                    format = null;
+                                    break;
                                 }
                             } while (true);
 
@@ -499,12 +521,14 @@ public class bookshop {
                                 } catch (Exception e) {
                                     System.out.println(">_< Parse book price error!!!");
                                     if (debug) System.err.println(e.getMessage());
-                                    flag = true; break;
+                                    flag = true;
+                                    break;
                                 }
                             } while (price <= 0);
                             if (flag) continue;
 
-                            int num = 0; flag = false;
+                            int num = 0;
+                            flag = false;
                             do {
                                 System.out.println("Pleas input the number of copies of the book:");
                                 choice = in.readLine();
@@ -519,8 +543,9 @@ public class bookshop {
                             } while (num < 0);
                             if (flag) continue;
 
-                            sql = "insert into book values(null, "+isbn+", ";
-                            if (format != null) sql += format.toString(); else sql += "null";
+                            sql = "insert into book values(null, " + isbn + ", ";
+                            if (format != null) sql += format.toString();
+                            else sql += "null";
                             sql += ", \'" + polish(w1) + "\', \'" + polish(w2) + "\', \'" + polish(w3);
                             sql += "\', " + Double.toString(price);
                             sql += ", " + Integer.toString(num) + ");";
@@ -540,14 +565,16 @@ public class bookshop {
                                 if (debug) e.printStackTrace();
                                 continue;
                             }
-                            rs.next(); int bid = rs.getInt(1);
+                            rs.next();
+                            int bid = rs.getInt(1);
                             //assume insert successfully
 
                             System.out.println("Please input the publisher of the book");
                             flag = false;
                             do {
                                 if (flag) System.out.println("Publisher name too long");
-                                flag =true; choice = in.readLine();
+                                flag = true;
+                                choice = in.readLine();
                             } while (choice.length() > 40);
                             int pid = mypublish.get_pid(con.stmt, choice);
                             if (pid == -1) continue;
@@ -570,13 +597,15 @@ public class bookshop {
                             do {
                                 flag1 = false;
                                 do {
-                                    if (flag1) alert("Author name too long"); flag1 = true;
+                                    if (flag1) alert("Author name too long");
+                                    flag1 = true;
                                     choice = in.readLine();
                                 } while (choice.length() > 40);
                                 int aid = 0;
                                 aid = mywriter.fetch_aid(con.stmt, choice);
                                 if (aid == -1 || !mywriter.iwrite(con.stmt, aid, bid)) {
-                                    flag2= true; break;
+                                    flag2 = true;
+                                    break;
                                 }
                                 flag = choose("Do you want to add another author?", 'y', 'n');
                                 tmp.add(aid);
@@ -588,7 +617,8 @@ public class bookshop {
                             for (int i = 0; i < tmp.size(); i++) {
                                 for (int j = 0; j < i; j++) {
                                     if (!mywriter.coauthor(con.stmt, bid, tmp.get(i), tmp.get(j))) {
-                                        flag = true; break;
+                                        flag = true;
+                                        break;
                                     }
                                 }
                                 if (flag) break;
@@ -602,7 +632,7 @@ public class bookshop {
                                 choice = in.readLine();
                                 try {
                                     bid = Integer.parseInt(choice);
-                                } catch(Exception e) {
+                                } catch (Exception e) {
                                     System.out.println(">_< Parse book id error!!!");
                                     if (debug) System.err.println(e.getMessage());
                                     continue;
@@ -618,13 +648,15 @@ public class bookshop {
                                 if (rs.next()) {
                                     System.out.println("Find the specific book successfully");
                                 } else {
-                                    alert("Can\'t find the specific book"); continue;
+                                    alert("Can\'t find the specific book");
+                                    continue;
                                 }
                             } else {
                                 choice = in.readLine();
                                 choice = choice.toUpperCase();
                                 if (choice.length() != 10) {
-                                    alert("ISBN length incorrect"); continue;
+                                    alert("ISBN length incorrect");
+                                    continue;
                                 }
                                 flag1 = false;
                                 for (int i = 0; i < choice.length(); i++) {
@@ -633,9 +665,10 @@ public class bookshop {
                                     }
                                 }
                                 if (flag1) {
-                                    alert("ISBN format error"); continue;
+                                    alert("ISBN format error");
+                                    continue;
                                 }
-                                sql = "select bid from book where isbn = " + choice + ";" ;
+                                sql = "select bid from book where isbn = " + choice + ";";
                                 try {
                                     rs = con.stmt.executeQuery(sql);
                                 } catch (Exception e) {
@@ -647,10 +680,12 @@ public class bookshop {
                                     bid = rs.getInt(1);
                                     System.out.println("Find the specific book successfully");
                                 } else {
-                                    alert("Can\'t find the book by isbn"); continue;
+                                    alert("Can\'t find the book by isbn");
+                                    continue;
                                 }
                             }
-                            int num = 0; flag = false;
+                            int num = 0;
+                            flag = false;
                             do {
                                 System.out.println("How many copies you want to add?");
                                 choice = in.readLine();
@@ -659,12 +694,14 @@ public class bookshop {
                                 } catch (Exception e) {
                                     alert("Parse add copy number error");
                                     if (debug) System.err.println(e.getMessage());
-                                    num = -1; flag = true; break;
+                                    num = -1;
+                                    flag = true;
+                                    break;
                                 }
                             } while (num <= 0);
                             if (flag) continue;
                             sql = "update book set number_of_copies = number_of_copies + " + choice + " " +
-                                    "where bid = "+ Integer.toString(bid)+";";
+                                    "where bid = " + Integer.toString(bid) + ";";
                             try {
                                 con.stmt.execute(sql);
                             } catch (Exception e) {
@@ -685,8 +722,10 @@ public class bookshop {
 
                             String tmp;
                             System.out.println("Please input m(blank for default 10)");
-                            tmp = in.readLine(); int m = 0;
-                            if (tmp.equals("")) m = 10; else {
+                            tmp = in.readLine();
+                            int m = 0;
+                            if (tmp.equals("")) m = 10;
+                            else {
                                 try {
                                     m = Integer.parseInt(tmp);
                                 } catch (Exception e) {
@@ -698,9 +737,9 @@ public class bookshop {
                             if (choice.charAt(0) == '1') {
                                 System.out.println("The list of the m most popular books");
                                 tmp = "(select sum(amount) from buy where buy.bid = book.bid ";
-                                tmp+= "and to_days(now())-to_days(buy_date)<=180)";
-                                sql = "select bid,isbn,"+tmp+"as amount,title_words from book order by amount desc ";
-                                sql+= "limit 0, " + Integer.toString(m) + ";";
+                                tmp += "and to_days(now())-to_days(buy_date)<=180)";
+                                sql = "select bid,isbn," + tmp + "as amount,title_words from book order by amount desc ";
+                                sql += "limit 0, " + Integer.toString(m) + ";";
 
                                 try {
                                     rs = con.stmt.executeQuery(sql);
@@ -717,15 +756,15 @@ public class bookshop {
                                     if (rs.getString(3) == null) {
                                         System.out.print(0);
                                     } else System.out.print(rs.getInt(3));
-                                    System.out.println("\t\t\t"+rs.getString(4));
+                                    System.out.println("\t\t\t" + rs.getString(4));
                                 }
                             } else if (choice.charAt(0) == '2') {
                                 System.out.println("The list of the m most popular authors");
                                 tmp = "(select sum(amount) from buy, iwrite ";
-                                tmp+= "where buy.bid = iwrite.bid and iwrite.aid=author.aid ";
-                                tmp+= "and to_days(now())-to_days(buy_date)<=180)";
-                                sql = "select aid, "+tmp+" as amount, aname from author order by amount desc ";
-                                sql+= "limit 0, " + Integer.toString(m) + ";";
+                                tmp += "where buy.bid = iwrite.bid and iwrite.aid=author.aid ";
+                                tmp += "and to_days(now())-to_days(buy_date)<=180)";
+                                sql = "select aid, " + tmp + " as amount, aname from author order by amount desc ";
+                                sql += "limit 0, " + Integer.toString(m) + ";";
 
                                 try {
                                     rs = con.stmt.executeQuery(sql);
@@ -746,10 +785,10 @@ public class bookshop {
                             } else {
                                 System.out.println("The list of the m most popular publishers");
                                 tmp = "(select sum(amount) from buy, publish ";
-                                tmp+= "where buy.bid = publish.bid and publish.pid=publisher.pid ";
-                                tmp+= "and to_days(now())-to_days(buy_date)<=180)";
-                                sql = "select pid, "+tmp+" as amount, pname from publisher order by amount desc ";
-                                sql+= "limit 0, " + Integer.toString(m) + ";";
+                                tmp += "where buy.bid = publish.bid and publish.pid=publisher.pid ";
+                                tmp += "and to_days(now())-to_days(buy_date)<=180)";
+                                sql = "select pid, " + tmp + " as amount, pname from publisher order by amount desc ";
+                                sql += "limit 0, " + Integer.toString(m) + ";";
 
                                 try {
                                     rs = con.stmt.executeQuery(sql);
@@ -762,7 +801,7 @@ public class bookshop {
                                 System.out.println("publisher id\tamount\t\t\tpublisher name");
 
                                 while (rs.next()) {
-                                     if (rs.getString(2) != null)
+                                    if (rs.getString(2) != null)
                                         System.out.printf("%d\t\t\t%d\t\t\t", rs.getInt(1), rs.getInt(2));
                                     else System.out.printf("%d\t\t\t0\t\t\t", rs.getInt(1));
                                     System.out.println(rs.getString(3));
@@ -841,13 +880,15 @@ public class bookshop {
                             System.out.println("Press Enter to continue...");
                             choice = in.readLine();
                         } else {
-                            leave = true; break;
+                            leave = true;
+                            break;
                         }
                     }
 
                     while (!leave && logged_in) {
                         display_customer();
-                        String choice = in.readLine(); int c = 0;
+                        String choice = in.readLine();
+                        int c = 0;
                         try {
                             c = Integer.parseInt(choice);
                         } catch (Exception e) {
@@ -863,9 +904,12 @@ public class bookshop {
                                 alert("No administrator authority");
                                 continue;
                             }
-                            admin = true; break;
+                            admin = true;
+                            break;
                         } else if (c == 2) {
-                            logged_in = false; admin = false; break;
+                            logged_in = false;
+                            admin = false;
+                            break;
                         } else if (c == 3) {
                             do {
                                 do {
@@ -882,11 +926,11 @@ public class bookshop {
                                     flag = false;
                                     do {
                                         if (!flag) System.out.println("Please input your full name(3~30 character)");
-                                            else alert("Full name length not correct");
+                                        else alert("Full name length not correct");
                                         flag = true;
                                         choice = in.readLine();
                                     } while (choice.length() > 30 || choice.length() < 3);
-                                    sql = "update customer set full_name = \'"+ polish(choice) + "\' where cid = " +
+                                    sql = "update customer set full_name = \'" + polish(choice) + "\' where cid = " +
                                             Integer.toString(cid) + ";";
                                     try {
                                         con.stmt.execute(sql);
@@ -897,7 +941,8 @@ public class bookshop {
                                     }
                                     System.out.println(">_< Changed full name successfully!!!");
                                 } else if (k == 2) {
-                                    flag = false; flag1 = false;
+                                    flag = false;
+                                    flag1 = false;
                                     Boolean tmp;
                                     do {
                                         if (!flag1) System.out.println("Please input your old password");
@@ -906,7 +951,8 @@ public class bookshop {
                                         choice = in.readLine();
                                         tmp = mylogin.check(con.stmt, cid, mymd5.getMD5(choice));
                                         if (tmp == null) {
-                                            flag = true; break;
+                                            flag = true;
+                                            break;
                                         }
                                     } while (tmp == false);
                                     if (flag) continue;
@@ -919,7 +965,7 @@ public class bookshop {
                                         System.out.println("Please confirm your new password");
                                         password = in.readLine();
                                     } while (!cur.equals(password) || cur.length() < 3 || cur.length() > 30);
-                                    sql = "update customer set password = \'"+mymd5.getMD5(cur)+"\' where cid = "+
+                                    sql = "update customer set password = \'" + mymd5.getMD5(cur) + "\' where cid = " +
                                             Integer.toString(cid) + ";";
                                     try {
                                         con.stmt.execute(sql);
@@ -938,7 +984,7 @@ public class bookshop {
                                         flag = true;
                                         choice = in.readLine();
                                     } while (choice.length() > 100);
-                                    sql = "update customer set address = \'"+ polish(choice) + "\' where cid = " +
+                                    sql = "update customer set address = \'" + polish(choice) + "\' where cid = " +
                                             Integer.toString(cid) + ";";
                                     try {
                                         con.stmt.execute(sql);
@@ -951,21 +997,24 @@ public class bookshop {
                                 } else if (k == 4) {
                                     long phone = 0;
 
-                                    flag = false; flag1 = false;
+                                    flag = false;
+                                    flag1 = false;
                                     do {
                                         if (!flag)
                                             System.out.println("Please input your phone number(11 bit)");
                                         else alert("phone number format not correct");
                                         choice = in.readLine();
-                                        flag = true; flag1 = (choice.length() != 11);
+                                        flag = true;
+                                        flag1 = (choice.length() != 11);
                                         for (int i = 0; i < choice.length(); i++) {
-                                            if (choice.charAt(i) <'0' || choice.charAt(i) > '9') {
-                                                flag1 = true; break;
+                                            if (choice.charAt(i) < '0' || choice.charAt(i) > '9') {
+                                                flag1 = true;
+                                                break;
                                             }
                                         }
                                     } while (flag1);
 
-                                    sql = "update customer set phone_number = \'"+ choice + "\' where cid = " +
+                                    sql = "update customer set phone_number = \'" + choice + "\' where cid = " +
                                             Integer.toString(cid) + ";";
                                     try {
                                         con.stmt.execute(sql);
@@ -1068,8 +1117,8 @@ public class bookshop {
                                 choice = in.readLine();
                             } while (choice.length() > 100);
 
-                            sql = "insert into feedback values(null, "+Integer.toString(bid)+", "+Integer.toString(cid);
-                            sql+= ", now(), "+Integer.toString(score)+", \'"+polish(choice)+"\');";
+                            sql = "insert into feedback values(null, " + Integer.toString(bid) + ", " + Integer.toString(cid);
+                            sql += ", now(), " + Integer.toString(score) + ", \'" + polish(choice) + "\');";
                             flag3 = runsql(sql);
                             if (flag3) print("0w0 Make feedback successfully!!!");
                         } else if (c == 5) {
@@ -1079,7 +1128,8 @@ public class bookshop {
                             print("S_i is like { [C_1] AND [C_2] AND ... AND [C_n] }");
                             print("C_i can be constraint about  authors, and/or publisher, " +
                                     "and/or title-words, and/or subject.");
-                            print("Get it?"); pause();
+                            print("Get it?");
+                            pause();
 
                             String br;
 
@@ -1087,7 +1137,7 @@ public class bookshop {
 
                             do {
                                 sql = "select bid,isbn,cover_format,key_words,title_words,subjects,price";
-                                sql+= " from book where number_of_copies > 0";
+                                sql += " from book where number_of_copies > 0";
                                 boolean firsts = true, stop1 = false;
                                 do {
                                     String sqls = "select distinct book.bid from publisher, book, publish " +
@@ -1211,7 +1261,7 @@ public class bookshop {
                                 if (choice.charAt(0) == 'a') {
                                     sql += "order by (select year from publish where publish.bid = book.bid) ";
                                     if (choose("sort by descending or ascending", 'd', 'a')) sql += "asc";
-                                        else sql +="desc";
+                                    else sql += "desc";
                                 } else if (choice.charAt(0) == 'b') {
                                     sql += "order by (select avg(score) from feedback where feedback.bid = book.bid) desc";
                                 } else {
@@ -1233,7 +1283,7 @@ public class bookshop {
                                 }
 
                                 stop = choose("Continue browse input?", 'y', 'n');
-                            } while(!stop);
+                            } while (!stop);
 
                             Integer cc = null;
                             do {
@@ -1265,22 +1315,23 @@ public class bookshop {
                                     amount = getint(choice);
                                     if (amount == null) break;
                                     sql = "select number_of_copies, price from book where " +
-                                            "bid ="+Integer.toString(bid)+";";
+                                            "bid =" + Integer.toString(bid) + ";";
 
                                     rs = querysql(sql);
                                     if (rs == null) break;
                                     rs.next();
                                     if (rs.getInt(1) < amount) {
-                                        alert("Not enough book available"); continue;
+                                        alert("Not enough book available");
+                                        continue;
                                     }
                                     double cost = rs.getDouble(2);
 
                                     sql = "update book set number_of_copies = number_of_copies-"
-                                            +Integer.toString(amount)+" where bid ="+Integer.toString(bid)+";";
+                                            + Integer.toString(amount) + " where bid =" + Integer.toString(bid) + ";";
                                     Boolean tmp = runsql(sql);
                                     if (!tmp) break;
-                                    sql = "insert into buy values(null, "+Integer.toString(bid)+", "+Integer.toString(cid)+", "
-                                            +Integer.toString(amount)+", now());";
+                                    sql = "insert into buy values(null, " + Integer.toString(bid) + ", " + Integer.toString(cid) + ", "
+                                            + Integer.toString(amount) + ", now());";
                                     tmp = runsql(sql);
                                     if (!tmp) break;
 
@@ -1305,10 +1356,10 @@ public class bookshop {
                                     } while (nn == null || nn < 1 || nn > 10);
 
                                     sql = "select fid, login_name, fdate, score, text, ";
-                                    sql+= "(select avg(score) from rate where ";
-                                    sql+= "rate.fid = feedback.fid) as rating";
-                                    sql+= " from customer, feedback where customer.cid = feedback.cid and bid = ";
-                                    sql+= Integer.toString(bid)+" order by rating desc limit 0, "+Integer.toString(nn)+";";
+                                    sql += "(select avg(score) from rate where ";
+                                    sql += "rate.fid = feedback.fid) as rating";
+                                    sql += " from customer, feedback where customer.cid = feedback.cid and bid = ";
+                                    sql += Integer.toString(bid) + " order by rating desc limit 0, " + Integer.toString(nn) + ";";
 
                                     rs = querysql(sql);
                                     if (rs == null) break;
@@ -1316,7 +1367,7 @@ public class bookshop {
                                         alert("No such feedback available");
                                         continue;
                                     }
-                                    print("Book id = "+Integer.toString(bid)+", following are the feedbacks:");
+                                    print("Book id = " + Integer.toString(bid) + ", following are the feedbacks:");
                                     print("feadback id\t\tuser name\t\tdate\t\tscore\t\ttext");
                                     do {
                                         System.out.printf("%s\t\t\t\t%s\t\t\t%s\t\t%s\t%s\n", rs.getString(1),
@@ -1328,11 +1379,12 @@ public class bookshop {
                                     stop_rate = choose("Rate the feedbacks?", 'y', 'n');
                                     Integer fid;
                                     while (!stop_rate) {
-                                        if (!first_time) stop_rate = choose("Continue to rate the feedbacks?", 'y', 'n');
+                                        if (!first_time)
+                                            stop_rate = choose("Continue to rate the feedbacks?", 'y', 'n');
                                         first_time = false;
                                         if (stop_rate) break;
                                         if (choose("Which feedback do you want to rate, please input "
-                                                +"the user name or feedback id?", 'u', 'f')) {
+                                                + "the user name or feedback id?", 'u', 'f')) {
                                             choice = in.readLine();
                                             fid = getint(choice);
                                             if (fid == null) break;
@@ -1350,27 +1402,33 @@ public class bookshop {
                                             }
                                         }
 
-                                        sql = "select * from feedback where fid = "+Integer.toString(fid)+" and cid = "
-                                                +Integer.toString(cid);
+                                        sql = "select * from feedback where fid = " + Integer.toString(fid) + " and cid = "
+                                                + Integer.toString(cid);
                                         rs = querysql(sql);
                                         if (rs == null) break;
-                                        if (rs.next()) {alert("You can not rate your own feedbacks"); continue;}
+                                        if (rs.next()) {
+                                            alert("You can not rate your own feedbacks");
+                                            continue;
+                                        }
 
-                                        sql = "select * from rate where fid = "+Integer.toString(fid)+" and cid = "
-                                                +Integer.toString(cid);
+                                        sql = "select * from rate where fid = " + Integer.toString(fid) + " and cid = "
+                                                + Integer.toString(cid);
                                         rs = querysql(sql);
                                         if (rs == null) break;
-                                        if (rs.next()) {alert("You have rated this feedback"); break;}
+                                        if (rs.next()) {
+                                            alert("You have rated this feedback");
+                                            break;
+                                        }
 
                                         do {
                                             print("How do you like this feedback? give a numerical score of 0-2 to "
-                                                +"represent \'useless\', \'useful\', \'very useful\' respectively.");
+                                                    + "represent \'useless\', \'useful\', \'very useful\' respectively.");
                                             choice = in.readLine();
                                         } while (choice.length() != 1 || choice.charAt(0) < '0'
                                                 || choice.charAt(0) > '2');
 
-                                        sql = "insert into rate values("+Integer.toString(cid)+", ";
-                                        sql+= Integer.toString(fid)+", "+choice+");";
+                                        sql = "insert into rate values(" + Integer.toString(cid) + ", ";
+                                        sql += Integer.toString(fid) + ", " + choice + ");";
 
                                         boolean tmp = runsql(sql);
                                         if (tmp == false) break;
@@ -1380,7 +1438,8 @@ public class bookshop {
                             } while (cc != 4);
                         } else if (c == 6) {
                             Integer aid1 = -1, aid2 = -1;
-                            flag = false; flag1 = false;
+                            flag = false;
+                            flag1 = false;
                             do {
                                 if (flag1) {
                                     flag = choose("Didn't find the writer. continue?", 'y', 'n');
@@ -1391,12 +1450,14 @@ public class bookshop {
                                 choice = in.readLine();
                                 aid1 = mywriter.aname_aid(con.stmt, choice);
                                 if (aid1 == null) {
-                                    flag = true; break;
+                                    flag = true;
+                                    break;
                                 }
                             } while (aid1 == -1);
                             if (flag) continue;
 
-                            flag = false; flag1 = false;
+                            flag = false;
+                            flag1 = false;
                             do {
                                 if (flag1) {
                                     flag = choose("Didn't find the writer. continue?", 'y', 'n');
@@ -1407,13 +1468,15 @@ public class bookshop {
                                 choice = in.readLine();
                                 aid2 = mywriter.aname_aid(con.stmt, choice);
                                 if (aid2 == null) {
-                                    flag = true; break;
+                                    flag = true;
+                                    break;
                                 }
                             } while (aid2 == -1);
                             if (flag) continue;
 
                             if (aid1 == aid2) {
-                                degree("0"); continue;
+                                degree("0");
+                                continue;
                             }
 
                             if (aid1 > aid2) {
@@ -1422,12 +1485,13 @@ public class bookshop {
                                 aid2 = tmp;
                             }
 
-                            sql = "select * from coauthor where aid1 = "+Integer.toString(aid1)+" and aid2 = "+
+                            sql = "select * from coauthor where aid1 = " + Integer.toString(aid1) + " and aid2 = " +
                                     Integer.toString(aid2) + "; ";
                             rs = querysql(sql);
                             if (rs == null) continue;
                             if (rs.next()) {
-                                degree("1"); continue;
+                                degree("1");
+                                continue;
                             }
 
                             sql = "select max(aid) from author;";
@@ -1437,40 +1501,44 @@ public class bookshop {
                             if (rs.next()) n = rs.getInt(1);
 
                             flag = false;
-                            for (int i = 1; i <= n; i++) if (i != aid1 && i != aid2) {
-                                sql = "select * from coauthor x, coauthor y where x.aid1 = " +
-                                        Integer.toString(Math.min(aid1, i)) + " and x.aid2 = " +
-                                        Integer.toString(Math.max(aid1, i)) + " and y.aid1 = " +
-                                        Integer.toString(Math.min(aid2, i)) + " and y.aid2 = " +
-                                        Integer.toString(Math.max(aid2, i))+";";
-                                rs = querysql(sql);
-                                if (rs == null) {
-                                    flag = true; break;
+                            for (int i = 1; i <= n; i++)
+                                if (i != aid1 && i != aid2) {
+                                    sql = "select * from coauthor x, coauthor y where x.aid1 = " +
+                                            Integer.toString(Math.min(aid1, i)) + " and x.aid2 = " +
+                                            Integer.toString(Math.max(aid1, i)) + " and y.aid1 = " +
+                                            Integer.toString(Math.min(aid2, i)) + " and y.aid2 = " +
+                                            Integer.toString(Math.max(aid2, i)) + ";";
+                                    rs = querysql(sql);
+                                    if (rs == null) {
+                                        flag = true;
+                                        break;
+                                    }
+                                    if (rs.next()) {
+                                        degree("2");
+                                        flag = true;
+                                        break;
+                                    }
                                 }
-                                if (rs.next()) {
-                                    degree("2"); flag = true; break;
-                                }
-                            }
                             if (flag) continue;
 
                             degree("more than 2");
                         } else if (c == 7) {
                             do {
                                 flag = choose("Currently you want suggestions from your "
-                                        +"order or specific book?", 'o', 's');
+                                        + "order or specific book?", 'o', 's');
                                 if (!flag) {
                                     sql = "select bid,isbn,price,title_words, (";
-                                    sql+= "select sum(amount) from buy where buy.bid = book.bid and buy.cid in";
-                                    sql+= "(select cid from customer where exists (";
-                                    sql+= "select * from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
-                                    sql+= "exists (select * from buy as y where y.cid = customer.cid and y.bid in (";
-                                    sql+= "select bid from buy as z where z.cid = "+Integer.toString(cid)+")))) as amount ";
-                                    sql+= "from book where not exists ";
-                                    sql+= "(select * from buy where buy.cid = "+Integer.toString(cid);
-                                    sql+= " and buy.bid = book.bid) and exists (select * from customer where exists (";
-                                    sql+= "select * from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
-                                    sql+= "exists (select * from buy as y where y.cid = customer.cid and y.bid in (";
-                                    sql+= "select bid from buy as z where z.cid = "+Integer.toString(cid)+"))) order"+
+                                    sql += "select sum(amount) from buy where buy.bid = book.bid and buy.cid in";
+                                    sql += "(select cid from customer where exists (";
+                                    sql += "select * from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
+                                    sql += "exists (select * from buy as y where y.cid = customer.cid and y.bid in (";
+                                    sql += "select bid from buy as z where z.cid = " + Integer.toString(cid) + ")))) as amount ";
+                                    sql += "from book where not exists ";
+                                    sql += "(select * from buy where buy.cid = " + Integer.toString(cid);
+                                    sql += " and buy.bid = book.bid) and exists (select * from customer where exists (";
+                                    sql += "select * from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
+                                    sql += "exists (select * from buy as y where y.cid = customer.cid and y.bid in (";
+                                    sql += "select bid from buy as z where z.cid = " + Integer.toString(cid) + "))) order" +
                                             " by amount desc;";
 
                                     rs = querysql(sql);
@@ -1503,19 +1571,20 @@ public class bookshop {
                                         bid = mybook.isbn_bid(con.stmt, choice);
                                         if (bid == null) break;
                                         if (bid == -1) {
-                                            alert("No such book exists"); break;
+                                            alert("No such book exists");
+                                            break;
                                         }
                                     }
                                     sql = "select bid,isbn,price,title_words,(select sum(amount) from buy where ";
                                     sql += "buy.bid = book.bid and buy.cid in(select cid from customer where exists (";
-                                    sql+= "select cid from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
-                                    sql+= "exists (select * from buy as y where y.cid = customer.cid and y.bid = "
-                                            +Integer.toString(bid)+"))) as amount from book where not exists ";
-                                    sql+= "(select * from buy where buy.cid = "+Integer.toString(cid);
-                                    sql+= " and buy.bid = book.bid) and exists (select * from customer where exists (";
-                                    sql+= "select * from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
-                                    sql+= "exists (select * from buy as y where y.cid = customer.cid and y.bid = "
-                                            +Integer.toString(bid)+")) order by amount desc;";
+                                    sql += "select cid from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
+                                    sql += "exists (select * from buy as y where y.cid = customer.cid and y.bid = "
+                                            + Integer.toString(bid) + "))) as amount from book where not exists ";
+                                    sql += "(select * from buy where buy.cid = " + Integer.toString(cid);
+                                    sql += " and buy.bid = book.bid) and exists (select * from customer where exists (";
+                                    sql += "select * from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
+                                    sql += "exists (select * from buy as y where y.cid = customer.cid and y.bid = "
+                                            + Integer.toString(bid) + ")) order by amount desc;";
 
                                     rs = querysql(sql);
                                     if (rs == null) break;
@@ -1534,7 +1603,7 @@ public class bookshop {
                             } while (!flag);
                         } else if (c == 8) {
                             flag = choose("Who do you want to trust or untrust, choose by "
-                                    +"user name or costomer id?", 'u', 'c');
+                                    + "user name or costomer id?", 'u', 'c');
                             Integer cid2 = null;
                             if (flag) {
                                 print("Now enter the customer id please:");
@@ -1562,18 +1631,19 @@ public class bookshop {
                                 continue;
                             }
 
-                            sql = "select * from judge where cid1 = "+Integer.toString(cid)+" and cid2 = ";
-                            sql+= Integer.toString(cid2)+";";
+                            sql = "select * from judge where cid1 = " + Integer.toString(cid) + " and cid2 = ";
+                            sql += Integer.toString(cid2) + ";";
 
                             rs = querysql(sql);
                             if (rs == null) continue;
                             if (rs.next()) {
-                                alert("You have (un)trusted the customer"); continue;
+                                alert("You have (un)trusted the customer");
+                                continue;
                             }
 
                             flag = choose("How you want to judge the customer, trusted or untrusted?", 't', 'u');
-                            sql = "insert into judge values("+Integer.toString(cid)+", "+Integer.toString(cid2);
-                            sql+= ", "+(flag?"False":"True")+");";
+                            sql = "insert into judge values(" + Integer.toString(cid) + ", " + Integer.toString(cid2);
+                            sql += ", " + (flag ? "False" : "True") + ");";
 
                             Boolean tmp = runsql(sql);
                             if (tmp) {
@@ -1594,8 +1664,8 @@ public class bookshop {
             System.out.println("Welcome and Goodbye~");
             con.closeConnection();
         } catch (Exception e) {
-        	 if (debug) e.printStackTrace();
-        	 System.err.println (">_< Cannot connect to database server!!!");
+            if (debug) e.printStackTrace();
+            System.err.println(">_< Cannot connect to database server!!!");
         }
     }
 }

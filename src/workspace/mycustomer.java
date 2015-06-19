@@ -9,7 +9,7 @@ import java.sql.Statement;
  */
 public class mycustomer {
     public static Boolean valid(Statement stmt, int cid) {
-        String sql = "select * from customer where cid = "+ Integer.toString(cid) + ";";
+        String sql = "select * from customer where cid = " + Integer.toString(cid) + ";";
         ResultSet rs;
         try {
             rs = stmt.executeQuery(sql);
@@ -26,8 +26,9 @@ public class mycustomer {
             return null;
         }
     }
+
     public static Integer username_cid(Statement stmt, String cname) {
-        String sql = "select cid from customer where login_name = \'"+ bookshop.polish(cname) + "\';";
+        String sql = "select cid from customer where login_name = \'" + bookshop.polish(cname) + "\';";
         ResultSet rs;
         try {
             rs = stmt.executeQuery(sql);

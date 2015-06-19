@@ -9,7 +9,7 @@ import java.sql.Statement;
  */
 public class myfeedback {
     public static Boolean valid(Statement stmt, int fid) {
-        String sql = "select * from feedback where fid = "+ Integer.toString(fid) + ";";
+        String sql = "select * from feedback where fid = " + Integer.toString(fid) + ";";
         ResultSet rs;
         try {
             rs = stmt.executeQuery(sql);
@@ -26,10 +26,11 @@ public class myfeedback {
             return null;
         }
     }
+
     public static Integer username_bid_fid(Statement stmt, String cname, int bid) {
         String sql = "select fid from feedback, customer where customer.cid = feedback.cid and " +
-                "login_name = \'"+ bookshop.polish(cname) + "\' and bid = ";
-        sql+= Integer.toString(bid) + ";";
+                "login_name = \'" + bookshop.polish(cname) + "\' and bid = ";
+        sql += Integer.toString(bid) + ";";
         ResultSet rs;
         try {
             rs = stmt.executeQuery(sql);

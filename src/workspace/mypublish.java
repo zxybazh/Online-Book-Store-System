@@ -24,7 +24,7 @@ public class mypublish {
             if (bookshop.debug) e.printStackTrace();
             return -1;
         }
-        sql = "insert into publisher (pname)values(\'" + bookshop.polish(publisher) +"\');";
+        sql = "insert into publisher (pname)values(\'" + bookshop.polish(publisher) + "\');";
         try {
             stmt.execute(sql);
         } catch (Exception e) {
@@ -50,7 +50,8 @@ public class mypublish {
             return -1;
         }
     }
-    public static boolean publish (Statement stmt, int pid, int bid, int year) {
+
+    public static boolean publish(Statement stmt, int pid, int bid, int year) {
         String sql = "Insert into publish values(" + Integer.toString(pid) + ", " + Integer.toString(bid) + ", "
                 + Integer.toString(year) + ");";
         try {

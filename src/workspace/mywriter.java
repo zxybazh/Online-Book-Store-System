@@ -6,7 +6,7 @@ import java.sql.Statement;
 
 public class mywriter {
     public static Boolean valid(Statement stmt, int aid) {
-        String sql = "select * from author where aid = "+ Integer.toString(aid) + ";";
+        String sql = "select * from author where aid = " + Integer.toString(aid) + ";";
         ResultSet rs;
         try {
             rs = stmt.executeQuery(sql);
@@ -23,6 +23,7 @@ public class mywriter {
             return null;
         }
     }
+
     public static Integer aname_aid(Statement stmt, String author) {
         String sql = "select * from author where aname = \'" + bookshop.polish(author) + "\';";
         ResultSet rs = null;
@@ -44,6 +45,7 @@ public class mywriter {
         }
         return -1;
     }
+
     public static int fetch_aid(Statement stmt, String author) {
         String sql = "select * from author where aname = \'" + bookshop.polish(author) + "\';";
         ResultSet rs = null;
@@ -63,7 +65,7 @@ public class mywriter {
             if (bookshop.debug) e.printStackTrace();
             return -1;
         }
-        sql = "insert into author (aname)values(\'" + bookshop.polish(author) +"\');";
+        sql = "insert into author (aname)values(\'" + bookshop.polish(author) + "\');";
         try {
             stmt.execute(sql);
         } catch (Exception e) {
@@ -89,7 +91,8 @@ public class mywriter {
             return -1;
         }
     }
-    public static boolean iwrite (Statement stmt, int aid, int bid) {
+
+    public static boolean iwrite(Statement stmt, int aid, int bid) {
         String sql = "Insert into iwrite values(" + Integer.toString(aid) + ", " + Integer.toString(bid) + ");";
         try {
             stmt.execute(sql);
@@ -100,6 +103,7 @@ public class mywriter {
         }
         return true;
     }
+
     public static boolean coauthor(Statement stmt, int bid, int aid1, int aid2) {
         if (aid1 > aid2) {
             int tmp = aid1;

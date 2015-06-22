@@ -107,4 +107,43 @@ public class myapi {
         con.closeConnection();
         return token;
     }
+
+    public static Boolean username_duplicate(String username) throws Exception {
+        myconnector con = new myconnector();
+        username = polish(username);
+
+        Boolean answer;
+        String sql = "select * from customer where login_name = \'" + username + "\';";
+
+        ResultSet rs = querysql(con, sql);
+
+        if (rs.next()) {
+            answer = true;
+        } else answer = false;
+        con.closeConnection();
+        return answer;
+    }
+
+    public static Boolean register(String username, String password, String full_name, String phone_number, String address) throws Exception {
+        if (username.length() < 3 || username.length() > 30) return null;
+        if (password.length() < 3 || password.length() > 30) return null;
+        if (full_name.length() > 30) return null;
+        if (phone_number.length() != 11) return null;
+        if (address.length() > 100) return null;
+
+        username = polish(username);
+        password = mymd5.getMD5(password);
+        full_name = polish(full_name);
+        phone_number = polish(phone_number);
+        address = polish(address);
+
+        myconnector con = new myconnector();
+
+        String sql = "insert into customer values(null, \'" + username + "\', \'" + full_name + "\', \'" +
+                password + "\', \'" + address + "\', " + phone_number + ", false);";
+
+        runsql(con, sql);
+        con.closeConnection();
+        return true;
+    }
 }

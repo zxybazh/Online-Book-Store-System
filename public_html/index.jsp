@@ -37,7 +37,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="">Wexley's Book Store</a>
+            <a class="navbar-brand" href="index.jsp">Wexley's Book Store</a>
         </div>
         <div class="navbar-header">
             <a class="navbar-brand" href="#">Customer</a>
@@ -49,7 +49,7 @@
             String password = request.getParameter("password");
             String token = null;
             Integer cid = null;
-            if (username != null) {
+            if (username != null && password != null) {
                 request.removeAttribute("username");
                 request.removeAttribute("password");
                 token = myapi.login(username, password);
@@ -81,19 +81,21 @@
             }
             if (token == null || cid == null) {
                 Cookie Cookies[] = request.getCookies();
-                String temp = null;
-                for (int i = 0; i < Cookies.length; ++i) {
-                    if (Cookies[i].getName().equals("token"))
-                        token = Cookies[i].getValue();
-                    if (Cookies[i].getName().equals("cid"))
-                        temp = Cookies[i].getValue();
-                    if (Cookies[i].getName().equals("username"))
-                        username = Cookies[i].getValue();
+                if (Cookies != null) {
+                    String temp = null;
+                    for (int i = 0; i < Cookies.length; ++i) {
+                        if (Cookies[i].getName().equals("token"))
+                            token = Cookies[i].getValue();
+                        if (Cookies[i].getName().equals("cid"))
+                            temp = Cookies[i].getValue();
+                        if (Cookies[i].getName().equals("username"))
+                            username = Cookies[i].getValue();
+                    }
+                    //token = request.getParameter("token");
+                    //temp = request.getParameter("cid");
+                    if (temp == null) cid = null;
+                    else cid = Integer.parseInt(temp);
                 }
-                //token = request.getParameter("token");
-                //temp = request.getParameter("cid");
-                if (temp == null) cid = null;
-                else cid = Integer.parseInt(temp);
             }
 
             Boolean tmp;
@@ -140,7 +142,7 @@
         <p>This is an online book store system based on JSP and MySQL for DataBase Project.</br>
             Welcome and hope you enjoy the books here.</p>
 
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Register Now &raquo;</a></p>
+        <p><a class="btn btn-primary btn-lg" href="register.jsp" role="button">Register Now &raquo;</a></p>
     </div>
 </div>
 

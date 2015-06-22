@@ -67,6 +67,41 @@ public class myapi {
         return ans;
     }
 
+    public static Long GetPhoneNumberByToken(String token) throws Exception {
+        if (token == null) return null;
+        token = polish(token);
+        myconnector con = new myconnector();
+        String sql = "select phone_number from customer, cookie where customer.cid = cookie.cid and token = \'" + token + "\';";
+        ResultSet rs = querysql(con, sql);
+        Long ans = null;
+        if (rs.next()) ans = rs.getLong(1);
+        con.closeConnection();
+        return ans;
+    }
+
+    public static String GetAddressByToken(String token) throws Exception {
+        if (token == null) return null;
+        token = polish(token);
+        myconnector con = new myconnector();
+        String sql = "select address from customer, cookie where customer.cid = cookie.cid and token = \'" + token + "\';";
+        ResultSet rs = querysql(con, sql);
+        String ans = null;
+        if (rs.next()) ans = rs.getString(1);
+        con.closeConnection();
+        return ans;
+    }
+
+    public static String GetFullNameByToken(String token) throws Exception {
+        if (token == null) return null;
+        token = polish(token);
+        myconnector con = new myconnector();
+        String sql = "select full_name from customer, cookie where customer.cid = cookie.cid and token = \'" + token + "\';";
+        ResultSet rs = querysql(con, sql);
+        String ans = null;
+        if (rs.next()) ans = rs.getString(1);
+        con.closeConnection();
+        return ans;
+    }
     public static Integer GetCidByToken(String token) throws Exception {
         if (token == null) return null;
         token = polish(token);
@@ -77,6 +112,38 @@ public class myapi {
         if (rs.next()) ans = rs.getInt(1);
         con.closeConnection();
         return ans;
+    }
+
+    public static void changePhoneNumber(int cid, String phone_number) throws Exception {
+        myconnector con = new myconnector();
+        String sql = "update customer set phone_number = " + phone_number + " where cid = " +
+                Integer.toString(cid) + ";";
+        runsql(con, sql);
+        con.closeConnection();
+    }
+
+    public static void changeAddress(int cid, String address) throws Exception {
+        myconnector con = new myconnector();
+        String sql = "update customer set address = \'" + polish(address) + "\' where cid = " +
+                Integer.toString(cid) + ";";
+        runsql(con, sql);
+        con.closeConnection();
+    }
+
+    public static void changeFullName(int cid, String full_name) throws Exception {
+        myconnector con = new myconnector();
+        String sql = "update customer set full_name = \'" + polish(full_name) + "\' where cid = " +
+                Integer.toString(cid) + ";";
+        runsql(con, sql);
+        con.closeConnection();
+    }
+
+    public static void changePassword(int cid, String password) throws Exception {
+        myconnector con = new myconnector();
+        String sql = "update customer set password = \'" + mymd5.getMD5(password) + "\' where cid = " +
+                Integer.toString(cid) + ";";
+        runsql(con, sql);
+        con.closeConnection();
     }
 
     public static void renew(int cid) throws Exception {

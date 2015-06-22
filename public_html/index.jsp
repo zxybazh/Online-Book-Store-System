@@ -107,9 +107,9 @@
                     flag = true;
         %>
         <div class=navbar-right>
-            <a class="navbar-text" href="#">Welcome, <%=username%>
+            <a class="navbar-text" href="see_profile.jsp">Welcome, <%=username%>
             </a>
-            <a class="navbar-text" href="./logout.jsp">Log out</a>
+            <a class="navbar-text" href="logout.jsp">Log out</a>
         </div>
         <%
                 }

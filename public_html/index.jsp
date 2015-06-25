@@ -45,6 +45,7 @@
         </div>
 
         <%
+            request.setCharacterEncoding("UTF-8");
             String username = request.getParameter("username");
             String password = request.getParameter("password");
             String token = null;
@@ -141,6 +142,8 @@
 
         <p>This is an online book store system based on JSP and MySQL for DataBase Project.</br>
             Welcome and hope you enjoy the books here.</p>
+
+        <p>Now enter the promo code FeiFei for 30% discount! </p>
 
         <p><a class="btn btn-primary btn-lg" href="register.jsp" role="button">Register Now &raquo;</a></p>
     </div>

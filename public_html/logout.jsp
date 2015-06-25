@@ -13,6 +13,7 @@
 <body>
 
 <%
+    request.setCharacterEncoding("UTF-8");
     Cookie c = new Cookie("username", "");
     c.setMaxAge(0);
     response.addCookie(c);

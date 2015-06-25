@@ -28,6 +28,7 @@
 
 <body>
 <%
+    request.setCharacterEncoding("UTF-8");
     String token = null, username = null;
     Integer cid = null;
     Cookie Cookies[] = request.getCookies();

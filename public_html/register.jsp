@@ -50,6 +50,8 @@
             <legend class="">Register</legend>
         </div>
         <%
+            request.setCharacterEncoding("UTF-8");
+
             String username = request.getParameter("reg_username");
             String password = request.getParameter("reg_password");
             String full_name = request.getParameter("reg_full_name");

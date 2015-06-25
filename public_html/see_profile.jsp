@@ -28,6 +28,7 @@
 
 <body>
 <%
+    request.setCharacterEncoding("UTF-8");
     String token = null, username = null;
     Integer cid = null;
     Cookie Cookies[] = request.getCookies();
@@ -56,6 +57,7 @@
         c.setMaxAge(0);
         response.addCookie(c);
         response.sendRedirect("index.jsp");
+        return;
     }
 %>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -84,8 +86,10 @@
     String address = myapi.GetAddressByToken(token);
     Long tmp = myapi.GetPhoneNumberByToken(token);
 
-    if (full_name == null || address == null || tmp == null)
+    if (full_name == null || address == null || tmp == null) {
         response.sendRedirect("index.jsp");
+        return;
+    }
     String phone_number = tmp.toString();
     while (phone_number.length() < 11) phone_number = '0' + phone_number;
 %>

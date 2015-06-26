@@ -40,8 +40,8 @@
             <a class="navbar-brand" href="index.jsp">Wexley's Book Store</a>
         </div>
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Customer</a>
-            <a class="navbar-brand" href="#">Manager</a>
+            <a class="navbar-brand" href="customer.jsp">Customer</a>
+            <a class="navbar-brand" href="manager.jsp">Manager</a>
         </div>
 
         <%
@@ -143,7 +143,7 @@
         <p>This is an online book store system based on JSP and MySQL for DataBase Project.</br>
             Welcome and hope you enjoy the books here.</p>
 
-        <p>Now enter the promo code FeiFei for 30% discount! </p>
+        <p>Now enter the promo code FeiFei for 30% discount! (More promo code available:-)</p>
 
         <p><a class="btn btn-primary btn-lg" href="register.jsp" role="button">Register Now &raquo;</a></p>
     </div>
@@ -157,7 +157,7 @@
 
             <p>Based on what you bought and what your are interested in, make intelligent recommendations.</p>
 
-            <p><a class="btn btn-default" href="#" role="button">高到不知哪里去 &raquo;</a></p>
+            <p><a class="btn btn-default" href="recommend.jsp" role="button">高到不知哪里去 &raquo;</a></p>
         </div>
         <div class="col-md-4">
             <h2>Book Browse System</h2>

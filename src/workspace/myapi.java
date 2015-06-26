@@ -1,6 +1,7 @@
 package workspace;
 
 import java.sql.ResultSet;
+import java.util.Vector;
 
 //All your APIs belongs to me !!!
 //Suck it, MVC !!!
@@ -67,6 +68,195 @@ public class myapi {
         return ans;
     }
 
+    public static Boolean CheckBid(int bid) throws Exception {
+        myconnector con = new myconnector();
+
+        Boolean ans = mybook.valid(con.stmt, bid);
+
+        con.closeConnection();
+        return ans;
+    }
+
+    public static Integer GetBidByISBN(String isbn) throws Exception {
+        myconnector con = new myconnector();
+
+        Integer ans = mybook.isbn_bid(con.stmt, isbn);
+
+        con.closeConnection();
+        return ans;
+    }
+
+    public static void ChangeAuthority(int cid, boolean admin) throws Exception {
+        myconnector con = new myconnector();
+
+        String sql = "update customer set admin = " + (admin ? "true" : "false") + " where cid = " + Integer.toString(cid) + ";";
+        runsql(con, sql);
+
+        con.closeConnection();
+    }
+
+    public static Vector<Vector<String>> RecommendationFromBid(int cid, int bid) throws Exception {
+
+        myconnector con = new myconnector();
+        String sql = "select bid,isbn,price,title_words,(select sum(amount) from buy where ";
+        sql += "buy.bid = book.bid and buy.cid in(select cid from customer where exists (";
+        sql += "select cid from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
+        sql += "exists (select * from buy as y where y.cid = customer.cid and y.bid = "
+                + Integer.toString(bid) + "))) as amount from book where not exists ";
+        sql += "(select * from buy where buy.cid = " + Integer.toString(cid);
+        sql += " and buy.bid = book.bid) and exists (select * from customer where exists (";
+        sql += "select * from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
+        sql += "exists (select * from buy as y where y.cid = customer.cid and y.bid = "
+                + Integer.toString(bid) + ")) order by amount desc;";
+
+        ResultSet rs = querysql(con, sql);
+
+        Vector<Vector<String>> ans = new Vector<Vector<String>>();
+        Vector<String> bbid = new Vector<String>(), isbn = new Vector<String>(),
+                price = new Vector<String>(), title_words = new Vector<String>(), amount = new Vector<String>();
+
+        if (rs != null) {
+            while (rs.next()) {
+                bbid.add(rs.getString(1));
+                isbn.add(rs.getString(2));
+                price.add(rs.getString(3));
+                title_words.add(rs.getString(4));
+                amount.add(rs.getString(5));
+            }
+        }
+
+        if (bbid.size() > 0) {
+            ans.add(bbid);
+            ans.add(isbn);
+            ans.add(price);
+            ans.add(title_words);
+            ans.add(amount);
+        }
+        con.closeConnection();
+
+        return ans;
+    }
+
+    public static Vector<Vector<String>> RecommendationFromPopular() throws Exception {
+
+        myconnector con = new myconnector();
+        String sql = "select bid,isbn,price,title_words, (";
+        sql += "select sum(amount) from buy where buy.bid = book.bid) as amount ";
+        sql += "from book order by amount desc";
+        ResultSet rs = querysql(con, sql);
+
+        Vector<Vector<String>> ans = new Vector<Vector<String>>();
+        Vector<String> bid = new Vector<String>(), isbn = new Vector<String>(),
+                price = new Vector<String>(), title_words = new Vector<String>(), amount = new Vector<String>();
+
+        if (rs != null) {
+            while (rs.next()) {
+                bid.add(rs.getString(1));
+                isbn.add(rs.getString(2));
+                price.add(rs.getString(3));
+                title_words.add(rs.getString(4));
+                amount.add(rs.getString(5));
+            }
+        }
+
+        if (bid.size() > 0) {
+            ans.add(bid);
+            ans.add(isbn);
+            ans.add(price);
+            ans.add(title_words);
+            ans.add(amount);
+        }
+        con.closeConnection();
+
+        return ans;
+    }
+
+    public static Vector<Vector<String>> RecommendationFromOrder(int cid) throws Exception {
+
+        myconnector con = new myconnector();
+        String sql = "select bid,isbn,price,title_words, (";
+        sql += "select sum(amount) from buy where buy.bid = book.bid and buy.cid in";
+        sql += "(select cid from customer where exists (";
+        sql += "select * from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
+        sql += "exists (select * from buy as y where y.cid = customer.cid and y.bid in (";
+        sql += "select bid from buy as z where z.cid = " + Integer.toString(cid) + ")))) as amount ";
+        sql += "from book where not exists ";
+        sql += "(select * from buy where buy.cid = " + Integer.toString(cid);
+        sql += " and buy.bid = book.bid) and exists (select * from customer where exists (";
+        sql += "select * from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
+        sql += "exists (select * from buy as y where y.cid = customer.cid and y.bid in (";
+        sql += "select bid from buy as z where z.cid = " + Integer.toString(cid) + "))) order" +
+                " by amount desc;";
+        ResultSet rs = querysql(con, sql);
+
+        Vector<Vector<String>> ans = new Vector<Vector<String>>();
+        Vector<String> bid = new Vector<String>(), isbn = new Vector<String>(),
+                price = new Vector<String>(), title_words = new Vector<String>(), amount = new Vector<String>();
+
+        if (rs != null) {
+            while (rs.next()) {
+                bid.add(rs.getString(1));
+                isbn.add(rs.getString(2));
+                price.add(rs.getString(3));
+                title_words.add(rs.getString(4));
+                amount.add(rs.getString(5));
+            }
+        }
+
+        if (bid.size() > 0) {
+            ans.add(bid);
+            ans.add(isbn);
+            ans.add(price);
+            ans.add(title_words);
+            ans.add(amount);
+        }
+        con.closeConnection();
+
+        return ans;
+    }
+
+    public static Integer GetCidByUsername(String cname) throws Exception {
+        myconnector con = new myconnector();
+
+        Integer ans = null;
+
+        String sql = "select cid from customer where login_name = \'" + polish(cname) + "\';";
+        ResultSet rs = querysql(con, sql);
+
+        if (rs.next()) {
+            ans = rs.getInt(1);
+        }
+
+        con.closeConnection();
+        return ans;
+    }
+
+    public static Boolean checkCid(int cid) throws Exception {
+        myconnector con = new myconnector();
+
+        Boolean ans = null;
+
+        ans = mycustomer.valid(con.stmt, cid);
+
+        con.closeConnection();
+        return ans;
+    }
+
+    public static Boolean checkAdministration(String token) throws Exception {
+        token = bookshop.polish(token);
+        myconnector con = new myconnector();
+
+        String sql = "select * from customer, cookie where customer.cid = cookie.cid and " +
+                "cookie.token = \'" + token + "\' and customer.admin = true;";
+        ResultSet rs = querysql(con, sql);
+        Boolean ans;
+
+        if (rs.next()) ans = true;
+        else ans = false;
+
+        con.closeConnection();
+        return ans;
+    }
     public static Long GetPhoneNumberByToken(String token) throws Exception {
         if (token == null) return null;
         token = polish(token);

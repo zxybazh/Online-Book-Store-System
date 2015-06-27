@@ -48,6 +48,16 @@ public class myapi {
         return true;
     }
 
+    public static void Addcopy(int bid, int num) throws Exception {
+        myconnector con = new myconnector();
+
+        String sql = "update book set number_of_copies = number_of_copies + " + Integer.toString(num) + " " +
+                "where bid = " + Integer.toString(bid) + ";";
+        runsql(con, sql);
+
+        con.closeConnection();
+    }
+
     public static Boolean checkmytoken(int cid, String token) throws Exception {
         token = bookshop.polish(token);
         myconnector con = new myconnector();
@@ -81,6 +91,7 @@ public class myapi {
         myconnector con = new myconnector();
 
         Integer ans = mybook.isbn_bid(con.stmt, isbn);
+        if (ans < 1) ans = null;
 
         con.closeConnection();
         return ans;

@@ -1,13 +1,14 @@
 <%--
   Created by IntelliJ IDEA.
   User: zxybazh
-  Date: 6/26/15
-  Time: 5:43 PM
+  Date: 6/27/15
+  Time: 3:06 PM
   To change this template use File | Settings | File Templates.
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" import="workspace.*" %>
 <%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="java.util.Vector" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -106,41 +107,109 @@
 </nav>
 <div class="jumbotron">
 </div>
+<%
+    String bookid = request.getParameter("ac_bookid");
+    String number = request.getParameter("number");
+    String isbn = request.getParameter("ac_isbn");
+
+    int bid = 0, num = 0;
+    if (isbn != null) {
+        Integer temp = myapi.GetBidByISBN(isbn);
+        if (temp != null) bid = temp;
+        else {
+%>
+<script>
+    alert("No such ISBN >_<");
+</script>
+<%
+    }
+} else if (bookid != null) {
+    try {
+        bid = Integer.parseInt(bookid);
+    } catch (Exception e) {
+        bid = 0;
+        num = 0;
+        e.printStackTrace();
+    }
+    Boolean temp = myapi.CheckBid(bid);
+    if (temp == null || !temp) {
+%>
+<script>
+    alert("No such Book ID >_<");
+</script>
+<%
+            bid = 0;
+        }
+    }
+    if (number != null && (bookid != null || isbn != null) && bid != 0) {
+        try {
+            num = Integer.parseInt(number);
+        } catch (Exception e) {
+            num = 0;
+%>
+<script>
+    alert("Parse add copy number error >_<");
+</script>
+<%
+        e.printStackTrace();
+    }
+    if (num != 0 && bid != 0) {
+        System.out.println(bid);
+        System.out.println(num);
+        System.out.println(isbn);
+
+        myapi.Addcopy(bid, num);
+%>
+<script>
+    alert("0W0 Add copy number successfully");
+</script>
+<%
+        }
+    }
+%>
 <div class="container">
     <fieldset>
         <div id="legend">
-            <legend class="">Change user's authority</legend>
+            <legend class="">Add Copies of Books</legend>
         </div>
     </fieldset>
 
-
     <div class="tabbable"> <!-- Only required for left/right tabs -->
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab1" data-toggle="tab">By username</a></li>
-            <li><a href="#tab2" data-toggle="tab">By user id</a></li>
+            <li class="active"><a href="#tab1" data-toggle="tab">By Book ID</a></li>
+            <li><a href="#tab2" data-toggle="tab">By ISBN</a></li>
         </ul>
         <div class="tab-content">
-            <div class="tab-pane active" id="tab1" style="padding-top: 10px">
-                <form action="authority_handler.jsp" method="post" onsubmit="return forward1()">
+
+            <div class="tab-pane active" id="tab1" style="padding-top: 22px">
+                <form action="addcopy.jsp" method="post" onsubmit="return forward1()">
                     <div class="control-group">
-                        <label class="control-label" for="username">Username</label>
+                        <label class="control-label" for="bookid">Book ID here</label>
 
                         <div class="form-inline">
-                            <input type="text" id="username" name="ca_username" placeholder=""
+                            <input type="number" id="bookid" name="ac_bookid" placeholder=""
                                    class="form-control" value="">
                         </div>
                     </div>
 
-                    <div class="control-group" style="padding-top: 22px">
-                        <label class="control-label" for="caway1">Select the way you change authority</label>
+                    <div class="control-group">
+                        <label class="control-label" for="number1">Number here</label>
 
                         <div class="form-inline">
-                            <select class="form-control" id="caway1" name="caway">
-                                <option value="manager">Change to Manager</option>
-                                <option value="customer">Change to Customer</option>
-                            </select>
+                            <input type="number" id="number1" name="number" placeholder=""
+                                   class="form-control" value="">
                         </div>
                     </div>
+                    <!--
+                    <div class="control-group">
+                        <label class="control-label" for="isbn">ISBN here</label>
+
+                        <div class="form-inline">
+                            <input type="text" id="isbn" name="rec_isbn" placeholder=""
+                                   class="form-control" value="">
+                        </div>
+                    </div>
+                    -->
 
                     <div class="control-group" style="padding-top: 22px">
                         <!-- Button -->
@@ -149,26 +218,39 @@
                         </div>
                     </div>
                 </form>
+                <script>
+                    function forward1() {
+                        var bi = $('#bookid').val();
+                        var num = $('#number1').val();
+                        if (bi == "") {
+                            alert("Book ID can't be empty >_<");
+                        } else if (bi < 1) {
+                            alert("Book ID should not be less than 1 >_<");
+                        } else if (num < 1) {
+                            alert("Add copy number should not be less than 1 >_<");
+                        } else return true;
+                        return false;
+                    }
+                </script>
             </div>
-            <div class="tab-pane" id="tab2" style="padding-top: 10px">
-                <form action="authority_handler.jsp" method="post" onsubmit="return forward2()">
+
+            <div class="tab-pane" id="tab2" style="padding-top: 22px">
+                <form action="addcopy.jsp" method="post" onsubmit="return forward2()">
                     <div class="control-group">
-                        <label class="control-label" for="userid">User ID</label>
+                        <label class="control-label" for="isbn">ISBN here</label>
 
                         <div class="form-inline">
-                            <input type="number" id="userid" name="ca_userid" placeholder=""
+                            <input type="text" id="isbn" name="ac_isbn" placeholder=""
                                    class="form-control" value="">
                         </div>
                     </div>
 
-                    <div class="control-group" style="padding-top: 22px">
-                        <label class="control-label" for="caway2">Select the way you change authority</label>
+                    <div class="control-group">
+                        <label class="control-label" for="number2">Number here</label>
 
                         <div class="form-inline">
-                            <select class="form-control" id="caway2" name="caway">
-                                <option value="manager">Change to Manager</option>
-                                <option value="customer">Change to Customer</option>
-                            </select>
+                            <input type="number" id="number2" name="number" placeholder=""
+                                   class="form-control" value="">
                         </div>
                     </div>
 
@@ -179,28 +261,23 @@
                         </div>
                     </div>
                 </form>
+                <script>
+                    function forward2() {
+                        var isbn = $('#isbn').val();
+                        var num = $('#number2').val();
+                        if (isbn.length != 10) {
+                            alert("Book ISBN length illegal");
+                        } else if (!(new RegExp("^[Xx0-9]+$").test(isbn)) || !(new RegExp("^[0-9]+$").test(isbn.substr(0, 9))) || !(new RegExp("^[Xx0-9]+$").test(isbn.substr(9, 1)))) {
+                            alert("Book ISBN contains illegal characters or format illegal");
+                        } else if (num < 1) {
+                            alert("Add copy number should not be less than 1 >_<");
+                        } else return true;
+                        return false;
+                    }
+                </script>
             </div>
         </div>
     </div>
-
-    <script>
-        function forward1() {
-            var un = username.value;
-            if (un.length < 3 || un.length > 30) {
-                alert("Username length not legal");
-            } else if (!(new RegExp("^[A-Za-z0-9]+$").test(un))) {
-                alert("Username contain illegal characters");
-            } else return true;
-            return false;
-        }
-        function forward2() {
-            var cw = userid.value;
-            if (cw < 1 || !(new RegExp("^[0-9]+$").test(cw))) {
-                alert("User ID illegal");
-            } else return true;
-            return false;
-        }
-    </script>
 
     <hr>
 

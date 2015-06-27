@@ -127,7 +127,7 @@
                 </li>
             </a>
 
-            <a href="#">
+            <a href="addcopy.jsp">
                 <li>
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     <span class="glyphicon-class">Add Copies of Books</span>

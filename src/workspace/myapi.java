@@ -95,6 +95,120 @@ public class myapi {
         con.closeConnection();
     }
 
+    public static Vector<Vector<String>> StatisticOfPublishers(int m) throws Exception {
+
+        if (m < 1) m = 10;
+
+        myconnector con = new myconnector();
+        String tmp, sql;
+
+        tmp = "(select sum(amount) from buy, publish ";
+        tmp += "where buy.bid = publish.bid and publish.pid=publisher.pid ";
+        tmp += "and to_days(now())-to_days(buy_date)<=180)";
+        sql = "select pid, pname, " + tmp + " as amount from publisher order by amount desc ";
+        sql += "limit 0, " + Integer.toString(m) + ";";
+
+        ResultSet rs = querysql(con, sql);
+
+        Vector<Vector<String>> ans = new Vector<Vector<String>>();
+        Vector<String> pid = new Vector<String>(), pname = new Vector<String>(), amount = new Vector<String>();
+
+        if (rs != null) {
+            while (rs.next()) {
+                pid.add(rs.getString(1));
+                pname.add(rs.getString(2));
+                amount.add(rs.getString(3));
+            }
+        }
+
+        if (pid.size() > 0) {
+            ans.add(pid);
+            ans.add(pname);
+            ans.add(amount);
+        }
+
+        con.closeConnection();
+
+        return ans;
+    }
+
+    public static Vector<Vector<String>> StatisticOfAuthors(int m) throws Exception {
+
+        if (m < 1) m = 10;
+
+        myconnector con = new myconnector();
+        String tmp, sql;
+
+        tmp = "(select sum(amount) from buy, iwrite ";
+        tmp += "where buy.bid = iwrite.bid and iwrite.aid=author.aid ";
+        tmp += "and to_days(now())-to_days(buy_date)<=180)";
+        sql = "select aid, aname, " + tmp + " as amount from author order by amount desc ";
+        sql += "limit 0, " + Integer.toString(m) + ";";
+
+        ResultSet rs = querysql(con, sql);
+
+        Vector<Vector<String>> ans = new Vector<Vector<String>>();
+        Vector<String> aid = new Vector<String>(), aname = new Vector<String>(), amount = new Vector<String>();
+
+        if (rs != null) {
+            while (rs.next()) {
+                aid.add(rs.getString(1));
+                aname.add(rs.getString(2));
+                amount.add(rs.getString(3));
+            }
+        }
+
+        if (aid.size() > 0) {
+            ans.add(aid);
+            ans.add(aname);
+            ans.add(amount);
+        }
+
+        con.closeConnection();
+
+        return ans;
+    }
+
+    public static Vector<Vector<String>> StatisticOfBooks(int m) throws Exception {
+
+        if (m < 1) m = 10;
+
+        myconnector con = new myconnector();
+        String tmp, sql;
+
+        tmp = "(select sum(amount) from buy where buy.bid = book.bid ";
+        tmp += "and to_days(now())-to_days(buy_date)<=180)";
+        sql = "select bid,isbn,price,title_words," + tmp + "as amount from book order by amount desc ";
+        sql += "limit 0, " + Integer.toString(m) + ";";
+
+        ResultSet rs = querysql(con, sql);
+
+        Vector<Vector<String>> ans = new Vector<Vector<String>>();
+        Vector<String> bbid = new Vector<String>(), isbn = new Vector<String>(),
+                price = new Vector<String>(), title_words = new Vector<String>(), amount = new Vector<String>();
+
+        if (rs != null) {
+            while (rs.next()) {
+                bbid.add(rs.getString(1));
+                isbn.add(rs.getString(2));
+                price.add(rs.getString(3));
+                title_words.add(rs.getString(4));
+                amount.add(rs.getString(5));
+            }
+        }
+
+        if (bbid.size() > 0) {
+            ans.add(bbid);
+            ans.add(isbn);
+            ans.add(price);
+            ans.add(title_words);
+            ans.add(amount);
+        }
+        con.closeConnection();
+
+        return ans;
+    }
+
     public static Vector<Vector<String>> RecommendationFromBid(int cid, int bid) throws Exception {
 
         myconnector con = new myconnector();

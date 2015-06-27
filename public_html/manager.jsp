@@ -134,7 +134,7 @@
                 </li>
             </a>
 
-            <a href="#">
+            <a href="statistic.jsp">
                 <li>
                     <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
                     <br class="glyphicon-class">Show Statistics </br>(This Semester)</span>

@@ -100,7 +100,7 @@
     </fieldset>
     <div class="bs-glyphicons">
         <ul class="bs-glyphicons-list">
-            <a href="#">
+            <a href="feedback.jsp">
                 <li>
                     <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
                     <span class="glyphicon-class">Feedback My Books</span>

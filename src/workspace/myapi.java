@@ -134,7 +134,7 @@ public class myapi {
 
         Integer temp = myapi.GetBidByISBN(isbn);
         if (temp == null) {
-            String sql = "insert into book values(null, " + isbn + ", ";
+            String sql = "insert into book values(null, \'" + isbn + "\', ";
             if (cover_format.equals("unknown")) sql += "null";
             else if (cover_format.equals("soft")) sql += "true";
             else if (cover_format.equals("hard")) sql += "false";
@@ -170,6 +170,37 @@ public class myapi {
         return ans;
     }
 
+    public static void Feedback(int cid, int bid, int score, String comment) throws Exception {
+        myconnector con = new myconnector();
+
+        String sql = "insert into feedback values(null, " + Integer.toString(bid) + ", " + Integer.toString(cid);
+        sql += ", now(), " + Integer.toString(score) + ", \'" + polish(comment) + "\');";
+
+        runsql(con, sql);
+
+        con.closeConnection();
+    }
+
+    public static Boolean CheckFeedbackBid(int cid, int bid) throws Exception {
+        myconnector con = new myconnector();
+
+        Boolean ans = null;
+
+        String sql = "select * from buy where cid = " + Integer.toString(cid) + " and bid = " + Integer.toString(bid) + ";";
+        ResultSet rs = querysql(con, sql);
+
+        if (rs.next()) {
+            sql = "select * from feedback where cid = " + Integer.toString(cid) + " and bid = " + Integer.toString(bid) + ";";
+            rs = querysql(con, sql);
+            if (rs.next()) ans = false;
+            else ans = true;
+        }
+
+        con.closeConnection();
+
+        return ans;
+    }
+
     public static void ChangeAuthority(int cid, boolean admin) throws Exception {
         myconnector con = new myconnector();
 
@@ -177,6 +208,45 @@ public class myapi {
         runsql(con, sql);
 
         con.closeConnection();
+    }
+
+    public static Vector<Vector<String>> GetOrderList(int cid) throws Exception {
+
+        myconnector con = new myconnector();
+        String sql;
+        sql = "select buy.oid, buy.buy_date, buy.amount, buy.bid, book.title_words, (select count(*) " +
+                "from feedback where feedback.cid = buy.cid and feedback.bid = buy.bid) from buy, book " +
+                "where cid = " + Integer.toString(cid) + " and buy.bid = book.bid;";
+
+        ResultSet rs = querysql(con, sql);
+
+        Vector<Vector<String>> ans = new Vector<Vector<String>>();
+        Vector<String> oid = new Vector<String>(), buy_date = new Vector<String>(), amount = new Vector<String>(),
+                bid = new Vector<String>(), title = new Vector<String>(), fb = new Vector<String>();
+
+        if (rs != null) {
+            while (rs.next()) {
+                oid.add(rs.getString(1));
+                buy_date.add(rs.getString(2));
+                amount.add(rs.getString(3));
+                bid.add(rs.getString(4));
+                title.add(rs.getString(5));
+                fb.add(rs.getString(6));
+            }
+        }
+
+        if (oid.size() > 0) {
+            ans.add(oid);
+            ans.add(buy_date);
+            ans.add(amount);
+            ans.add(bid);
+            ans.add(title);
+            ans.add(fb);
+        }
+
+        con.closeConnection();
+
+        return ans;
     }
 
     public static Vector<Vector<String>> UserAwardsForHelpfulness(int m) throws Exception {
@@ -374,10 +444,10 @@ public class myapi {
         sql += "exists (select * from buy as y where y.cid = customer.cid and y.bid = "
                 + Integer.toString(bid) + "))) as amount from book where not exists ";
         sql += "(select * from buy where buy.cid = " + Integer.toString(cid);
-        sql += " and buy.bid = book.bid) and exists (select * from customer where exists (";
+        sql += " and buy.bid = book.bid) and (exists (select * from customer where exists (";
         sql += "select * from buy as x where x.cid = customer.cid and book.bid = x.bid) and ";
         sql += "exists (select * from buy as y where y.cid = customer.cid and y.bid = "
-                + Integer.toString(bid) + ")) order by amount desc;";
+                + Integer.toString(bid) + "))or book.bid = " + Integer.toString(bid) + ") order by amount desc;";
 
         ResultSet rs = querysql(con, sql);
 

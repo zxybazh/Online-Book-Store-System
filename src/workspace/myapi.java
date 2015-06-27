@@ -78,6 +78,79 @@ public class myapi {
         return ans;
     }
 
+    public static Integer GetPidByPname(String pname) throws Exception {
+        //If not exist then it will creat one
+        myconnector con = new myconnector();
+
+        Integer ans = mypublish.get_pid(con.stmt, pname);
+        if (ans != null && ans < 1) ans = null;
+
+        con.closeConnection();
+        return ans;
+    }
+
+    public static Boolean Coauthor(int bid, int aid1, int aid2) throws Exception {
+        myconnector con = new myconnector();
+
+        Boolean tmp = mywriter.coauthor(con.stmt, bid, aid1, aid2);
+
+        con.closeConnection();
+        return tmp;
+    }
+
+    public static Integer GetAidByAname(String aname) throws Exception {
+        //If not exist then it will creat one
+        myconnector con = new myconnector();
+
+        Integer ans = mywriter.fetch_aid(con.stmt, aname);
+        if (ans != null && ans < 1) ans = null;
+
+        con.closeConnection();
+        return ans;
+    }
+
+    public static Boolean WriteRegister(int aid, int bid) throws Exception {
+        myconnector con = new myconnector();
+
+        Boolean tmp = mywriter.iwrite(con.stmt, aid, bid);
+
+        con.closeConnection();
+        return tmp;
+    }
+
+    public static Boolean PublishRegister(int pid, int bid, int year) throws Exception {
+        myconnector con = new myconnector();
+
+        Boolean tmp = mypublish.publish(con.stmt, pid, bid, year);
+
+        con.closeConnection();
+        return tmp;
+    }
+
+    public static Integer AddNewBook(String title, String subjects, String key_words, String isbn,
+                                     double price, int copy_number, String cover_format) throws Exception {
+        Integer ans = null;
+        myconnector con = new myconnector();
+
+        Integer temp = myapi.GetBidByISBN(isbn);
+        if (temp == null) {
+            String sql = "insert into book values(null, " + isbn + ", ";
+            if (cover_format.equals("unknown")) sql += "null";
+            else if (cover_format.equals("soft")) sql += "true";
+            else if (cover_format.equals("hard")) sql += "false";
+
+            sql += ", \'" + polish(key_words) + "\', \'" + polish(title) + "\', \'" + polish(subjects);
+            sql += "\', " + Double.toString(price);
+            sql += ", " + Integer.toString(copy_number) + ");";
+
+            runsql(con, sql);
+
+            ans = myapi.GetBidByISBN(isbn);
+        }
+        con.closeConnection();
+        return ans;
+    }
+
     public static Boolean CheckBid(int bid) throws Exception {
         myconnector con = new myconnector();
 

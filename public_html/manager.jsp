@@ -120,7 +120,7 @@
                 </li>
             </a>
 
-            <a href="#">
+            <a href="addbook.jsp">
                 <li>
                     <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
                     <span class="glyphicon-class">Add New Book</span>

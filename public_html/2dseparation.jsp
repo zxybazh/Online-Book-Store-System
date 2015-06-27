@@ -1,12 +1,13 @@
 <%--
   Created by IntelliJ IDEA.
   User: zxybazh
-  Date: 6/25/15
-  Time: 7:17 PM
+  Date: 6/28/15
+  Time: 1:29 AM
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" import="workspace.*" %>
 <%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="java.util.Vector" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -95,54 +96,80 @@
 <div class="container">
     <fieldset>
         <div id="legend">
-            <legend class="">Customer Page</legend>
+            <legend class="">Two Degrees of Separation</legend>
         </div>
     </fieldset>
-    <div class="bs-glyphicons">
-        <ul class="bs-glyphicons-list">
-            <a href="feedback.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Feedback My Books</span>
-                </li>
-            </a>
 
-            <a href="#">
-                <li>
-                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Book Browse</span>
-                </li>
-            </a>
+    <%
+        String aname1 = request.getParameter("2d_aname1");
+        String aname2 = request.getParameter("2d_aname2");
+        if (aname1 == null) aname1 = "";
+        if (aname2 == null) aname2 = "";
 
-            <a href="2dseparation.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Two Degrees of Separation</span>
-                </li>
-            </a>
+    %>
 
-            <a href="recommend.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Make Recommendations</span>
-                </li>
-            </a>
+    <form action="2dseparation.jsp" method="post" onsubmit="return forward()">
+        <div class="control-group">
+            <label class="control-label" for="aname1">The First Author</label>
 
-            <a href="#">
-                <li>
-                    <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Trust or Untrust Someone</span>
-                </li>
-            </a>
+            <div class="form-inline">
+                <input type="text" id="aname1" name="2d_aname1" placeholder="" class="form-control" value="<%=aname1%>"
+                       ,
+                       maxlength="40">
+            </div>
+            <p class="help-block">Please input the name of the first author(no more than 40 characters).</p>
+        </div>
 
-            <a href="#">
-                <li>
-                    <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Make Purchase</span>
-                </li>
-            </a>
-        </ul>
-    </div>
+        <div class="control-group">
+            <label class="control-label" for="aname2">The Second Author</label>
+
+            <div class="form-inline">
+                <input type="text" id="aname2" name="2d_aname2" placeholder="" class="form-control" value="<%=aname2%>"
+                       ,
+                       maxlength="40">
+            </div>
+            <p class="help-block">Please input the name of the second author(no more than 40 characters).</p>
+        </div>
+
+        <div class="control-group">
+            <!-- Button -->
+            <div class="controls">
+                <button id="submit" type="submit" class="btn btn-success">Confirm</button>
+            </div>
+        </div>
+    </form>
+    <script>
+        function forward() {
+            var a1 = $('#aname1').val();
+            var a2 = $('#aname2').val();
+            if (a1 == "" || a2 == "") {
+                alert("Author name can't be empty >_<");
+            } else return true;
+            return false;
+        }
+    </script>
+
+    <%
+        if (!aname1.equals("") && !aname2.equals("")) {
+            Integer a1 = myapi.GetAidByAname_NonCreate(aname1);
+            Integer a2 = myapi.GetAidByAname_NonCreate(aname2);
+            if (a1 == null || a2 == null) {
+    %>
+    <script>alert("No such author >_<");</script>
+    <%
+    } else {
+        Integer dist = myapi.DistanceOfAuthors(a1, a2);
+        if (dist == null) {
+    %>
+    <script>alert("Calculate distance error >_<");</script>
+    <%
+                } else {
+                    out.println("<h3>The two authors are " + (dist > 2 ? "more than 2" : dist.toString()) +
+                            " degree(s) separated.</h3>");
+                }
+            }
+        }
+    %>
     <hr>
 
     <footer>

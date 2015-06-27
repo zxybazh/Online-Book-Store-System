@@ -78,6 +78,61 @@ public class myapi {
         return ans;
     }
 
+    public static Integer DistanceOfAuthors(int aid1, int aid2) throws Exception {
+        if (aid1 == aid2) return 0;
+
+        myconnector con = new myconnector();
+        Integer ans = null;
+
+        if (aid1 > aid2) {
+            int temp = aid1;
+            aid1 = aid2;
+            aid2 = temp;
+        }
+
+        String sql = "select * from coauthor where aid1 = " + Integer.toString(aid1) + " and aid2 = " +
+                Integer.toString(aid2) + "; ";
+        ResultSet rs = querysql(con, sql);
+
+        if (rs.next()) {
+            ans = 1;
+        } else {
+
+            sql = "select max(aid) from author;";
+            rs = querysql(con, sql);
+            int n = 0;
+            if (rs.next()) n = rs.getInt(1);
+
+            for (int i = 1; i <= n; i++) {
+                if (i != aid1 && i != aid2) {
+                    sql = "select * from coauthor x, coauthor y where x.aid1 = " +
+                            Integer.toString(Math.min(aid1, i)) + " and x.aid2 = " +
+                            Integer.toString(Math.max(aid1, i)) + " and y.aid1 = " +
+                            Integer.toString(Math.min(aid2, i)) + " and y.aid2 = " +
+                            Integer.toString(Math.max(aid2, i)) + ";";
+                    rs = querysql(con, sql);
+                    if (rs.next()) {
+                        ans = 2;
+                        break;
+                    }
+                }
+            }
+        }
+        if (ans == null) ans = 3;
+        con.closeConnection();
+        return ans;
+    }
+
+    public static Integer GetAidByAname_NonCreate(String aname) throws Exception {
+        myconnector con = new myconnector();
+
+        Integer ans = mywriter.aname_aid(con.stmt, aname);
+        if (ans != null && ans < 1) ans = null;
+
+        con.closeConnection();
+        return ans;
+    }
+
     public static Integer GetPidByPname(String pname) throws Exception {
         //If not exist then it will creat one
         myconnector con = new myconnector();

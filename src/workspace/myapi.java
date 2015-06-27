@@ -95,6 +95,78 @@ public class myapi {
         con.closeConnection();
     }
 
+    public static Vector<Vector<String>> UserAwardsForHelpfulness(int m) throws Exception {
+
+        if (m < 1) m = 10;
+
+        myconnector con = new myconnector();
+        String tmp, sql;
+
+        tmp = "(select sum(rate.score) from rate, feedback where rate.fid = feedback.fid ";
+        tmp += "and feedback.cid = customer.cid)";
+        sql = "select customer.cid, customer.login_name, " + tmp + " as point from customer ";
+        sql += "order by point desc limit 0, " + Integer.toString(m) + ";";
+
+        ResultSet rs = querysql(con, sql);
+
+        Vector<Vector<String>> ans = new Vector<Vector<String>>();
+        Vector<String> cid = new Vector<String>(), cname = new Vector<String>(), amount = new Vector<String>();
+
+        if (rs != null) {
+            while (rs.next()) {
+                cid.add(rs.getString(1));
+                cname.add(rs.getString(2));
+                amount.add(rs.getString(3));
+            }
+        }
+
+        if (cid.size() > 0) {
+            ans.add(cid);
+            ans.add(cname);
+            ans.add(amount);
+        }
+
+        con.closeConnection();
+
+        return ans;
+    }
+
+    public static Vector<Vector<String>> UserAwardsForTrust(int m) throws Exception {
+
+        if (m < 1) m = 10;
+
+        myconnector con = new myconnector();
+        String tmp, sql;
+
+        tmp = "((select count(*) from judge where cid2 = customer.cid and trust = true)-(";
+        tmp += "select count(*) from judge where cid2 = customer.cid and trust = false))";
+        sql = "select customer.cid, customer.login_name, " + tmp + " as trust from customer ";
+        sql += "order by trust desc limit 0, " + Integer.toString(m) + ";";
+
+        ResultSet rs = querysql(con, sql);
+
+        Vector<Vector<String>> ans = new Vector<Vector<String>>();
+        Vector<String> cid = new Vector<String>(), cname = new Vector<String>(), amount = new Vector<String>();
+
+        if (rs != null) {
+            while (rs.next()) {
+                cid.add(rs.getString(1));
+                cname.add(rs.getString(2));
+                amount.add(rs.getString(3));
+            }
+        }
+
+        if (cid.size() > 0) {
+            ans.add(cid);
+            ans.add(cname);
+            ans.add(amount);
+        }
+
+        con.closeConnection();
+
+        return ans;
+    }
+
     public static Vector<Vector<String>> StatisticOfPublishers(int m) throws Exception {
 
         if (m < 1) m = 10;

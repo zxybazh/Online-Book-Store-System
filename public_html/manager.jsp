@@ -141,7 +141,7 @@
                 </li>
             </a>
 
-            <a href="#">
+            <a href="user_award.jsp">
                 <li>
                     <span class="glyphicon glyphicon-king" aria-hidden="true"></span>
                     <span class="glyphicon-class">Giver User Awards</span>

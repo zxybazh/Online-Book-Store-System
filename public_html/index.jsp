@@ -164,7 +164,7 @@
 
             <p>Combination of deep specific search together with simple naive search!</p>
 
-            <p><a class="btn btn-default" href="#" role="button">找的比谁都快 &raquo;</a></p>
+            <p><a class="btn btn-default" href="browse.jsp" role="button">找的比谁都快 &raquo;</a></p>
         </div>
         <div class="col-md-4">
             <h2>Buy Buy Buy </h2>

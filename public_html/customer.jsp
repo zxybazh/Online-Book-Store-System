@@ -102,15 +102,22 @@
         <ul class="bs-glyphicons-list">
             <a href="feedback.jsp">
                 <li>
-                    <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     <span class="glyphicon-class">Feedback My Books</span>
+                </li>
+            </a>
+
+            <a href="browse.jsp">
+                <li>
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                    <span class="glyphicon-class">Book Browse</span>
                 </li>
             </a>
 
             <a href="#">
                 <li>
-                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Book Browse</span>
+                    <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+                    <span class="glyphicon-class">Show Feedback</span>
                 </li>
             </a>
 

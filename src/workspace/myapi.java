@@ -7,7 +7,11 @@ import java.util.Vector;
 //Suck it, MVC !!!
 
 public class myapi {
+    final static boolean debug = true;
+
+    //todo change debug state;
     public static ResultSet querysql(myconnector con, String sql) {
+        if (debug) System.out.println(sql);
         ResultSet rs;
         try {
             rs = con.stmt.executeQuery(sql);
@@ -109,6 +113,43 @@ public class myapi {
 
         con.closeConnection();
 
+        return ans;
+    }
+
+    public static Vector<String> GetMoreInformationFromBid(int bid) throws Exception {
+        myconnector con = new myconnector();
+
+        Vector<String> ans = new Vector<String>();
+
+        String sql = "select book.bid, isbn, title_words, subjects, key_words, price, cover_format from book" +
+                " where bid =" + Integer.toString(bid) + ";";
+        ResultSet rs = querysql(con, sql);
+
+        if (!rs.next()) ans = null;
+        else {
+            for (int i = 1; i <= 7; i++) ans.add(rs.getString(i));
+            sql = "select pname, year from publish, publisher where publish.bid = " + Integer.toString(bid) + " and publisher.pid = publish.pid;";
+            rs = querysql(con, sql);
+            if (!rs.next()) {
+                ans.add("");
+                ans.add("");
+            } else {
+                for (int i = 1; i <= 2; i++) ans.add(rs.getString(i));
+            }
+            sql = "select aname from iwrite, author where iwrite.bid = " + Integer.toString(bid) + " and iwrite.aid = author.aid;";
+            rs = querysql(con, sql);
+            if (!rs.next()) ans.add("");
+            else {
+                String author = "";
+                do {
+                    if (!author.equals("")) author += ";";
+                    author += rs.getString(1);
+                } while (rs.next());
+                ans.add(author);
+            }
+        }
+
+        con.closeConnection();
         return ans;
     }
 
@@ -291,6 +332,117 @@ public class myapi {
 
         Integer ans = mybook.isbn_bid(con.stmt, isbn);
         if (ans < 1) ans = null;
+
+        con.closeConnection();
+        return ans;
+    }
+
+    public static Vector<Integer> AdvancedSearch(Vector<String> way, Vector<String> option, Vector<String> limit,
+                                                 String sort_way) throws Exception {
+        myconnector con = new myconnector();
+
+        Vector<Integer> ans = new Vector<>();
+        int n = limit.size();
+
+        String sql = "select distinct book.bid from book, publish, publisher, iwrite, author where (1=1) ";
+        for (int i = 0; i < n; i++) {
+            String temp = sql;
+            sql = "";
+            if (way.get(i).equals("OR")) sql += "or ";
+            else sql += "and ";
+            if (option.get(i).equals("title")) {
+                sql += "title_words like \'%" + polish(limit.get(i)) + "%\' ";
+            } else if (option.get(i).equals("subject")) {
+                sql += "subjects like \'%" + polish(limit.get(i)) + "%\' ";
+            } else if (option.get(i).equals("keyword")) {
+                sql += "key_words like \'%" + polish(limit.get(i)) + "%\' ";
+            } else if (option.get(i).equals("isbn")) {
+                sql += "isbn like \'%" + polish(limit.get(i)) + "%\' ";
+            } else if (option.get(i).equals("price_sup")) {
+                double x;
+                try {
+                    x = Double.parseDouble(limit.get(i));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    sql = temp;
+                    continue;
+                }
+                sql += "price <= " + Double.toString(x) + " ";
+            } else if (option.get(i).equals("price_inf")) {
+                double x;
+                try {
+                    x = Double.parseDouble(limit.get(i));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    sql = temp;
+                    continue;
+                }
+                sql += "price >= " + Double.toString(x) + " ";
+            } else if (option.get(i).equals("cover_format")) {
+                if (limit.get(i).toLowerCase().equals("hard")) {
+                    sql += "cover_format = true ";
+                } else if (limit.get(i).toLowerCase().equals("soft")) {
+                    sql += "cover_format = false ";
+                } else {
+                    sql = temp;
+                    continue;
+                }
+            } else if (option.get(i).equals("writer")) {
+                sql += "(iwrite.bid = book.bid and iwrite.aid = author.aid and author.aname like \'%" + polish(limit.get(i)) + "%\') ";
+            } else if (option.get(i).equals("publisher")) {
+                sql += "(publish.bid = book.bid and publish.pid = publisher.pid and publisher.pname like \'%" + polish(limit.get(i)) + "%\') ";
+            } else if (option.get(i).equals("publish_year")) {
+                int x;
+                try {
+                    x = Integer.parseInt(limit.get(i));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    sql = temp;
+                    continue;
+                }
+                sql += "(publish.bid = book.bid and publish.pid = publisher.pid and publish.year =" + Integer.toString(x) + ") ";
+            } else {
+                sql = temp;
+                continue;
+            }
+            temp += sql;
+            sql = temp;
+        }
+
+        if (sort_way.equals("year")) {
+            sql += "order by (select year from publish where publish.bid = book.bid)";
+        } else if (sort_way.equals("avgfb")) {
+            sql += "order by (select avg(score) from feedback where feedback.bid = book.bid)";
+        } else if (sort_way.equals("avgtfb")) {
+            sql += "order by (select avg(score) from feedback where feedback.bid = book.bid " +
+                    "and feedback.cid in (select cid from customer where (select count(*) from judge where " +
+                    "cid2 = cid and trust = true)>=(select count(*) from judge where cid2 = cid and trust = false)))";
+        }
+        sql += ";";
+
+        ResultSet rs = querysql(con, sql);
+
+        while (rs.next()) ans.add(rs.getInt(1));
+
+        con.closeConnection();
+        return ans;
+    }
+
+    public static Vector<Integer> SimpleSearch(String s) throws Exception {
+        myconnector con = new myconnector();
+
+        Vector<Integer> ans = new Vector<>();
+        s = polish(s);
+
+        String sql = "select distinct book.bid from book, publish, publisher, iwrite, author " +
+                "where title_words like \'%" + s + "%\' or subjects like \'%" + s + "%\' " +
+                "or key_words like \'%" + s + "%\' or (publisher.pid = publish.pid and " +
+                "publish.bid = book.bid and publisher.pname like \'%" + s + "%\') or " +
+                "(iwrite.aid = author.aid and iwrite.bid = book.bid and author.aname " +
+                "like \'%" + s + "%\');";
+        ResultSet rs = querysql(con, sql);
+
+        while (rs.next()) ans.add(rs.getInt(1));
 
         con.closeConnection();
         return ans;

@@ -114,7 +114,7 @@
                 </li>
             </a>
 
-            <a href="#">
+            <a href="show_feedback.jsp">
                 <li>
                     <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
                     <span class="glyphicon-class">Show Feedback</span>

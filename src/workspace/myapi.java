@@ -7,11 +7,8 @@ import java.util.Vector;
 //Suck it, MVC !!!
 
 public class myapi {
-    final static boolean debug = true;
 
-    //todo change debug state;
     public static ResultSet querysql(myconnector con, String sql) {
-        if (debug) System.out.println(sql);
         ResultSet rs;
         try {
             rs = con.stmt.executeQuery(sql);
@@ -113,6 +110,53 @@ public class myapi {
 
         con.closeConnection();
 
+        return ans;
+    }
+
+    public static String Rate(int cid, int fid, int score) throws Exception {
+        myconnector con = new myconnector();
+        String ans = null;
+
+        String sql = "select cid from feedback where fid = " + Integer.toString(fid) + ";";
+        ResultSet rs = querysql(con, sql);
+
+        if (rs.next()) {
+            if (rs.getInt(1) == cid) {
+                ans = "You can't rate your own feedback >_<";
+            } else {
+                sql = "select * from rate where fid = " + Integer.toString(fid) + " and cid =" + Integer.toString(cid) + ";";
+                rs = querysql(con, sql);
+                if (rs.next()) {
+                    ans = "You have rated this feedback >_<";
+                } else {
+                    sql = "insert into rate values(" + Integer.toString(cid) + "," + Integer.toString(fid) + "," + Integer.toString(score) + ");";
+                    runsql(con, sql);
+                    ans = "0w0 Rate feedback successfully";
+                }
+            }
+        } else ans = "Can't find the feedback >_<";
+
+        con.closeConnection();
+        return ans;
+    }
+
+    public static Vector<Vector<String>> GetFeedbackByBid(int bid, int num) throws Exception {
+        myconnector con = new myconnector();
+        Vector<Vector<String>> ans = new Vector<>();
+        String sql = "select fid, login_name, fdate, score, text from feedback, customer where feedback.cid = customer.cid " +
+                "and feedback.bid = " + Integer.toString(bid) + " order by (select avg(score) from rate where " +
+                "rate.fid = feedback.fid) limit 0, " + Integer.toString(num) + ";";
+        ResultSet rs = querysql(con, sql);
+
+        while (rs.next()) {
+            Vector<String> temp = new Vector<>();
+
+            for (int i = 1; i <= 5; i++) temp.add(rs.getString(i));
+
+            ans.add(temp);
+        }
+
+        con.closeConnection();
         return ans;
     }
 

@@ -171,7 +171,7 @@
 
             <p>Make your purchase RIGHT NOW!</br>30% Discount for purchase code FeiFei</p>
 
-            <p><a class="btn btn-default" href="#" role="button">我今天是作为一个买家 &raquo;</a></p>
+            <p><a class="btn btn-default" href="purchase.jsp" role="button">我今天是作为一个买家 &raquo;</a></p>
         </div>
     </div>
 

@@ -124,6 +124,14 @@
                 myapi.Addcopy(bid, -num);
             }
             if (flag) {
+                for (int i = 0; i < temp.length; i++) {
+                    String pair[] = temp[i].split("x");
+                    int bid = Integer.parseInt(pair[0]);
+                    int num = Integer.parseInt(pair[1]);
+
+                    myapi.Purchase(cid, bid, num);
+
+                }
     %>
     <script>
         alert("0w0 Purchase Successfully");

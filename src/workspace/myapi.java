@@ -296,6 +296,17 @@ public class myapi {
         return ans;
     }
 
+    public static void Purchase(int cid, int bid, int amount) throws Exception {
+        myconnector con = new myconnector();
+
+        String sql = "insert into buy values(null, " + Integer.toString(bid) + ", " +
+                Integer.toString(cid) + ", " + Integer.toString(amount) + ", now());";
+
+        runsql(con, sql);
+
+        con.closeConnection();
+    }
+
     public static void Feedback(int cid, int bid, int score, String comment) throws Exception {
         myconnector con = new myconnector();
 

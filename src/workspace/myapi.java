@@ -78,6 +78,27 @@ public class myapi {
         return ans;
     }
 
+    public static Boolean TrustOrUntrustSomeone(int cid1, int cid2, boolean trust) throws Exception {
+        myconnector con = new myconnector();
+        Boolean ans = null;
+
+        String sql = "select * from judge where cid1 = " + Integer.toString(cid1) +
+                " and cid2 = " + Integer.toString(cid2) + ";";
+
+        ResultSet rs = querysql(con, sql);
+
+        if (rs.next()) ans = false;
+        else {
+            sql = "insert into judge values(" + Integer.toString(cid1) + ", " + Integer.toString(cid2);
+            sql += ", " + (trust ? "True" : "False") + ");";
+            runsql(con, sql);
+            ans = true;
+        }
+
+        con.closeConnection();
+        return ans;
+    }
+
     public static Integer DistanceOfAuthors(int aid1, int aid2) throws Exception {
         if (aid1 == aid2) return 0;
 

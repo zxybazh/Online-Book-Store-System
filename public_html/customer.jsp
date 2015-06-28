@@ -128,7 +128,7 @@
                 </li>
             </a>
 
-            <a href="#">
+            <a href="trust.jsp">
                 <li>
                     <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
                     <span class="glyphicon-class">Trust or Untrust Someone</span>

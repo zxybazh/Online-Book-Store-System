@@ -208,8 +208,6 @@
                 alert("Book ID can't be empty >_<");
             } else if (score == "") {
                 alert("Score can't be empty >_<");
-            } else if (comment == "") {
-                alert("Comment can't be empty >_<");
             } else return true;
             return false;
         }

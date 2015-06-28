@@ -1,12 +1,14 @@
 <%--
   Created by IntelliJ IDEA.
   User: zxybazh
-  Date: 6/25/15
-  Time: 7:17 PM
+  Date: 6/28/15
+  Time: 4:28 PM
   To change this template use File | Settings | File Templates.
 --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" import="workspace.*" %>
 <%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="java.util.Vector" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,17 +32,22 @@
     request.setCharacterEncoding("UTF-8");
     String token = null, username = null;
     Integer cid = null;
+    String order_list = null;
     Cookie Cookies[] = request.getCookies();
     if (Cookies != null) {
         for (int i = 0; i < Cookies.length; i++) {
             if (Cookies[i].getName().equals("token"))
                 token = Cookies[i].getValue();
+            if (Cookies[i].getName().equals("orderlist")) {
+                order_list = Cookies[i].getValue();
+            }
             if (Cookies[i].getName().equals("username"))
                 username = Cookies[i].getValue();
             if (Cookies[i].getName().equals("cid")) {
                 String temp = Cookies[i].getValue();
                 cid = Integer.parseInt(temp);
             }
+
         }
     }
     Boolean situation = null;
@@ -93,64 +100,58 @@
 <div class="jumbotron">
 </div>
 <div class="container">
-    <fieldset>
-        <div id="legend">
-            <legend class="">Customer Page</legend>
-        </div>
-    </fieldset>
-    <div class="bs-glyphicons">
-        <ul class="bs-glyphicons-list">
-            <a href="feedback.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Feedback My Books</span>
-                </li>
-            </a>
+    <%
+        if (order_list == null) order_list = "";
+        String temp[] = order_list.split("s");
+        boolean flag = true;
+        if (!(temp == null || temp.length == 0 || (temp.length == 1 && temp[0].equals("")))) {
+            for (int i = 0; i < temp.length; i++) {
+                String pair[] = temp[i].split("x");
+                int bid = Integer.parseInt(pair[0]);
+                int num = Integer.parseInt(pair[1]);
 
-            <a href="#">
-                <li>
-                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Book Browse</span>
-                </li>
-            </a>
+                Boolean tmp = myapi.QuesSufficient(bid, num);
+                if (tmp == null || tmp == false) {
+                    for (int j = 0; j < i; i++) {
+                        String tt[] = temp[j].split("x");
+                        int bb = Integer.parseInt(pair[0]);
+                        int nn = Integer.parseInt(pair[1]);
+                        myapi.Addcopy(bb, nn);
+                    }
+                    flag = false;
+                    break;
+                }
+                myapi.Addcopy(bid, -num);
+            }
+            if (flag) {
+    %>
+    <script>
+        alert("0w0 Purchase Successfully");
+        setTimeout(location.href = "index.jsp", 5000);
+    </script>
+    <%
+        Cookie c = new Cookie("orderlist", "");
+        c.setMaxAge(0);
+        response.addCookie(c);
+    } else {
+    %>
+    <script>
+        alert("Purchase Failed >_<");
+        setTimeout(location.href = "purchase.jsp", 5000);
+    </script>
+    <%
+        }
+    } else {
+    %>
+    <script>
+        alert("Nothing to buy >_<");
+        setTimeout(location.href = "purchase.jsp", 5000);
+    </script>
+    <%
+        }
+    %>
 
-            <a href="2dseparation.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Two Degrees of Separation</span>
-                </li>
-            </a>
-
-            <a href="recommend.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Make Recommendations</span>
-                </li>
-            </a>
-
-            <a href="trust.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Trust or Untrust Someone</span>
-                </li>
-            </a>
-
-            <a href="purchase.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Make Purchase</span>
-                </li>
-            </a>
-        </ul>
-    </div>
-    <hr>
-
-    <footer>
-        <p>&copy; zxybazh 2015</p>
-    </footer>
 </div>
-<!-- /container -->
-
 
 <!-- Bootstrap core JavaScript
 ================================================== -->

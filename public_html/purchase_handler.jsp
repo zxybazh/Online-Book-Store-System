@@ -1,12 +1,14 @@
 <%--
   Created by IntelliJ IDEA.
   User: zxybazh
-  Date: 6/25/15
-  Time: 7:17 PM
+  Date: 6/28/15
+  Time: 3:53 PM
   To change this template use File | Settings | File Templates.
 --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" import="workspace.*" %>
 <%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="java.util.Vector" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,17 +32,21 @@
     request.setCharacterEncoding("UTF-8");
     String token = null, username = null;
     Integer cid = null;
+    String order_list = null;
     Cookie Cookies[] = request.getCookies();
     if (Cookies != null) {
         for (int i = 0; i < Cookies.length; i++) {
             if (Cookies[i].getName().equals("token"))
                 token = Cookies[i].getValue();
+            if (Cookies[i].getName().equals("orderlist"))
+                order_list = Cookies[i].getValue();
             if (Cookies[i].getName().equals("username"))
                 username = Cookies[i].getValue();
             if (Cookies[i].getName().equals("cid")) {
                 String temp = Cookies[i].getValue();
                 cid = Integer.parseInt(temp);
             }
+
         }
     }
     Boolean situation = null;
@@ -95,59 +101,108 @@
 <div class="container">
     <fieldset>
         <div id="legend">
-            <legend class="">Customer Page</legend>
+            <legend class="">Buy right now</legend>
         </div>
     </fieldset>
-    <div class="bs-glyphicons">
-        <ul class="bs-glyphicons-list">
-            <a href="feedback.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Feedback My Books</span>
-                </li>
-            </a>
+    <h2>Current Cart</h2>
+    <%
+        if (order_list == null) order_list = "";
+        String temp[] = order_list.split("s");
+        if (temp == null || temp.length == 0 || (temp.length == 1 && temp[0].equals(""))) {
+    %>
+    <script>
+        alert("You haven't added any book to your cart _(:з」∠)_");
+        setTimeout(location.href = "index.jsp", 5000);
+    </script>
+</div>
+</body>
+</html>
+<%
+        return;
+    }
+    double total = 0;
+%>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>ISBN</th>
+        <th>Amount</th>
+        <th>Title</th>
+        <th>Total Price</th>
+        <th>Sufficient</th>
+    </tr>
+    </thead>
+    <tbody>
+    <%
+        for (int i = 0; i < temp.length; i++) {
+            String pair[] = temp[i].split("x");
+            //System.out.println("--"+temp[i]+"--");
+            int bid = Integer.parseInt(pair[0]);
+            int num = Integer.parseInt(pair[1]);
+            //System.out.println("--"+bid+"--"+num+"--");
+            Vector<String> a = myapi.GetInformationFromBid(bid);
+            if (a != null) {
+    %>
+    <tr>
+        <th scope="row"><%=a.get(0)%>
+        </th>
+        <th><%=a.get(1)%>
+        </th>
+        <th><%=num%>
+        <th><%=a.get(2)%>
+        </th>
+        <th><%=Double.parseDouble(a.get(3)) * num%>
+        </th>
+        <%
+            total += Double.parseDouble(a.get(3)) * num;
+            Boolean tmp = myapi.QuesSufficient(bid, num);
+            String suff;
+            if (tmp == null || !tmp) suff = "No";
+            else suff = "Yes";
+        %>
+        <th><%=suff%>
+        </th>
+    </tr>
+    <%
+            }
+        }
+    %>
+    </tbody>
+</table>
+<%
+    String promo = request.getParameter("mp_promo");
+    if (promo != null && !promo.equals("")) {
+        Vector<String> a = myapi.QuesPromo(promo);
+        if (a != null) {
+            total = total * (100 - Integer.parseInt(a.get(1))) / 100.0;
 
-            <a href="#">
-                <li>
-                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Book Browse</span>
-                </li>
-            </a>
+%>
+<h2>Discount of <%=a.get(1)%>%</h2>
 
-            <a href="2dseparation.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Two Degrees of Separation</span>
-                </li>
-            </a>
+<h2><%=a.get(0)%>
+</h2>
+<%
+        }
+    }
+%>
+<h3>Total Price : <%=total%>
+</h3>
 
-            <a href="recommend.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Make Recommendations</span>
-                </li>
-            </a>
+<form action="buy.jsp" method="post">
 
-            <a href="trust.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Trust or Untrust Someone</span>
-                </li>
-            </a>
-
-            <a href="purchase.jsp">
-                <li>
-                    <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-                    <span class="glyphicon-class">Make Purchase</span>
-                </li>
-            </a>
-        </ul>
+    <div class="control-group" style="padding-top:10px">
+        <!-- Button -->
+        <div class="controls">
+            <button id="submit2" type="submit" class="btn btn-success">Pay at once</button>
+        </div>
     </div>
-    <hr>
+</form>
 
-    <footer>
-        <p>&copy; zxybazh 2015</p>
-    </footer>
+<hr>
+<footer>
+    <p>&copy; zxybazh 2015</p>
+</footer>
 </div>
 <!-- /container -->
 

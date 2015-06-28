@@ -48,6 +48,23 @@ public class myapi {
         return true;
     }
 
+    public static Vector<String> QuesPromo(String promo) throws Exception {
+        myconnector con = new myconnector();
+        Vector<String> ans = new Vector();
+
+        String sql = "select message, discount from promo where promo_code = \'" + polish(promo) + "\' and chance > 0;";
+        ResultSet rs = querysql(con, sql);
+        if (rs.next()) {
+            ans.add(rs.getString(1));
+            ans.add(rs.getString(2));
+            sql = "update promo set chance = chance -1 where promo_code = \'" + polish(promo) + "\';";
+            runsql(con, sql);
+        } else ans = null;
+
+        con.closeConnection();
+        return ans;
+    }
+
     public static void Addcopy(int bid, int num) throws Exception {
         myconnector con = new myconnector();
 
@@ -74,6 +91,39 @@ public class myapi {
                         + token + "\';";
                 runsql(con, sql);
             }
+        con.closeConnection();
+        return ans;
+    }
+
+    public static Boolean QuesSufficient(int bid, int num) throws Exception {
+        myconnector con = new myconnector();
+
+        Boolean ans = null;
+
+        String sql = "select number_of_copies from book where bid = " + Integer.toString(bid) + ";";
+        ResultSet rs = querysql(con, sql);
+
+        if (rs.next()) {
+            ans = (num <= rs.getInt(1));
+        }
+
+        con.closeConnection();
+
+        return ans;
+    }
+
+    public static Vector<String> GetInformationFromBid(int bid) throws Exception {
+        myconnector con = new myconnector();
+
+        Vector<String> ans = new Vector<String>();
+
+        String sql = "select bid, isbn, title_words, price from book where bid =" + Integer.toString(bid) + ";";
+        ResultSet rs = querysql(con, sql);
+
+        if (!rs.next()) ans = null;
+        else
+            for (int i = 1; i <= 4; i++) ans.add(rs.getString(i));
+
         con.closeConnection();
         return ans;
     }
